@@ -17,7 +17,7 @@ def getRepositoriesSince(since):
   data = []
   complete_url = base_url + "repositories?since="+str(since)
 
-  contents = requests.get(complete_url, auth=('NellyBARRET', '0a9aeebdfc76352ed729922192ab0d654ce1927c'))
+  contents = requests.get(complete_url, auth=('NellyBARRET', 'XXX'))
 
   # contents = requests.get(complete_url)
   return contents.json()
