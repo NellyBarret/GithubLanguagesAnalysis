@@ -3,9 +3,6 @@ import json
 import requests
 base_url = "https://api.github.com/"
 
-def login():
-  login = requests.get('https://api.github.com/', auth=('NellyBARRET', '27juillet2018'))
-
 def get_languages(owner, project_name):
   complete_url = base_url+"repos/"+owner+"/"+project_name+"/languages"
   contents = urllib.request.urlopen(complete_url).read()
@@ -17,7 +14,7 @@ def getRepositoriesSince(since):
   data = []
   complete_url = base_url + "repositories?since="+str(since)
 
-  contents = requests.get(complete_url, auth=('NellyBARRET', 'XXX'))
+  contents = requests.get(complete_url, auth=('NellyBARRET', 'XXX')) # XXX must be replaced by the Oauth token
 
   # contents = requests.get(complete_url)
   return contents.json()
