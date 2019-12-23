@@ -1,10 +1,16 @@
 import urllib.request
 import json
 import requests
+import auth
+
 base_url = "https://api.github.com/"
 
+# To authenticate, copy "auth.json.skeleton" as "auth.json" (included in .gitignore) and fill it in
+client_id, oauth_token = auth.get_auth_data("auth.json")
+
+
 def get_languages(owner, project_name):
-  complete_url = base_url+"repos/"+owner+"/"+project_name+"/languages"
+  complete_url = f"{base_url}repos/{owner}/{project_name}/languages"
   contents = urllib.request.urlopen(complete_url).read()
   # print(contents)
   return json.loads(contents)
@@ -12,11 +18,10 @@ def get_languages(owner, project_name):
 def getRepositoriesSince(since):
   print("getting repo since " + str(since))
   data = []
-  complete_url = base_url + "repositories?since="+str(since)
+  complete_url = f"{base_url}repositories?since={since}"
 
-  contents = requests.get(complete_url, auth=('NellyBARRET', 'XXX')) # XXX must be replaced by the Oauth token
+  contents = requests.get(complete_url, auth=(client_id, oauth_token))
 
-  # contents = requests.get(complete_url)
   return contents.json()
 
 
