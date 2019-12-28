@@ -1,5 +1,7 @@
 import urllib.request
 import json
+from random import randrange
+
 import requests
 import auth
 
@@ -15,6 +17,19 @@ def get_languages(owner, project_name):
     return json.loads(contents)
 
 
+def get_year(owner, project_name):
+    """
+    TODO : récupération de l'année du projet
+    """
+    if randrange(1, 1000) < 500:
+        return 2010
+    else:
+        if randrange(1, 1000) < 500:
+            return 2011
+        else:
+            return 2012
+
+
 def getRepositoriesSince(since):
     # print("getting repo since " + str(since))
     complete_url = f"{base_url}repositories?since={since}"
@@ -22,10 +37,16 @@ def getRepositoriesSince(since):
     return contents.json()
 
 
+def getGoodInfos(repo):
+    repo = {'year': get_year(repo[0]['owner']['login'], repo[0]['name']),
+              'languages': get_languages(repo[0]['owner']['login'], repo[0]['name'])}
+    return repo
+
+
 def getAllRepositories():
     local_repo = getRepositoriesSince(1)
     all_repositories = []
-    all_repositories.append(get_languages(local_repo[0]['owner']['login'], local_repo[0]['name']))
+    all_repositories.append(getGoodInfos(local_repo))
     if type(local_repo) is list:
         repo_id = local_repo[len(local_repo) - 1]["id"]
     else:
@@ -33,7 +54,7 @@ def getAllRepositories():
     while (local_repo and repo_id < 1000):
         local_repo = getRepositoriesSince(repo_id)
         repo_id = local_repo[len(local_repo) - 1]["id"]
-        all_repositories.append(get_languages(local_repo[0]['owner']['login'], local_repo[0]['name']))
+        all_repositories.append(getGoodInfos(local_repo))
     return all_repositories
 
 
@@ -48,17 +69,21 @@ def get_in_shape(data):
     """
       Transforme les données brutes récupérées par getAllRepositories en données utilisables simplement pour le chord diagramme et le rayon de soleil :
        - Un fichier de sortie contenant l'utilisation des langagues au format JSON pour les rayons de soleil : { "Ruby": 34, "C": 50 ...}
-       - Un fichier contenant la force des liens entre languages : [{languages : {"Ruby", C++ }, "lien" : 30}, {languages : {"Ruby", Java }, "lien" : 42}, ... }
+       - Un fichier contenant la force des liens entre languages : {('Ruby', 'C'): 26, ('php', 'Ruby'): 55, ...}
     """
 
-    # Fichier contenant l'utilisation
+    # Fichier contenant l'utilisation, répartie par année
     comptage = {}
     for d in data:  # Parcours de chacun des repositories
+        languages = d['languages']
+        annee = d['year']
+        if not(annee in comptage):
+            comptage[annee] = {}
         sum_repo = 0
-        for l in d.keys():
-            sum_repo += d.get(l, 0)
-        for l in d.keys():  # Parcours de chacun des langages utilisés
-          comptage[l] = comptage.get(l, 0) + 1*(d.get(l, 0)/sum_repo)
+        for l in languages.keys():
+            sum_repo += languages.get(l, 0)
+        for l in languages.keys():  # Parcours de chacun des langages utilisés
+            comptage[annee][l] = comptage[annee].get(l, 0) + 1 * (languages.get(l, 0) / sum_repo)
     f = open("usage.json", "w")
     f.write(json.dumps(comptage))
     f.close()
@@ -66,4 +91,5 @@ def get_in_shape(data):
 
 if __name__ == "__main__":
     all_r = getAllRepositories()
+    print(all_r)
     get_in_shape(all_r)
