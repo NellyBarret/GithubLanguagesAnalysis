@@ -51,15 +51,19 @@ def get_in_shape(data):
        - Un fichier contenant la force des liens entre languages : [{languages : {"Ruby", C++ }, "lien" : 30}, {languages : {"Ruby", Java }, "lien" : 42}, ... }
     """
 
-    # Fichier contenant l'utilisation, reste à trouver un compromis entre le nombre et l'utilisation du langage dans le projet
+    # Fichier contenant l'utilisation
     comptage = {}
-    for d in data: # Parcours de chacun des repositories
-        for l in d.keys(): # Parcours de chacun des langages utilisés
-          comptage[l] = comptage.get(l, 0) + 1
+    for d in data:  # Parcours de chacun des repositories
+        sum_repo = 0
+        for l in d.keys():
+            sum_repo += d.get(l, 0)
+        for l in d.keys():  # Parcours de chacun des langages utilisés
+          comptage[l] = comptage.get(l, 0) + 1*(d.get(l, 0)/sum_repo)
     f = open("usage.json", "w")
-    f.write(comptage)
+    f.write(json.dumps(comptage))
     f.close()
+
 
 if __name__ == "__main__":
     all_r = getAllRepositories()
-    print(get_in_shape(all_r))
+    get_in_shape(all_r)
