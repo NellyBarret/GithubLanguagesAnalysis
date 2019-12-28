@@ -10,49 +10,56 @@ client_id, oauth_token = auth.get_auth_data("auth.json")
 
 
 def get_languages(owner, project_name):
-  complete_url = f"{base_url}repos/{owner}/{project_name}/languages"
-  contents = urllib.request.urlopen(complete_url).read()
-  # print(contents)
-  return json.loads(contents)
+    complete_url = f"{base_url}repos/{owner}/{project_name}/languages"
+    contents = urllib.request.urlopen(complete_url).read()
+    return json.loads(contents)
+
 
 def getRepositoriesSince(since):
-  print("getting repo since " + str(since))
-  data = []
-  complete_url = f"{base_url}repositories?since={since}"
-
-  contents = requests.get(complete_url, auth=(client_id, oauth_token))
-
-  return contents.json()
+    # print("getting repo since " + str(since))
+    complete_url = f"{base_url}repositories?since={since}"
+    contents = requests.get(complete_url, auth=(client_id, oauth_token))
+    return contents.json()
 
 
 def getAllRepositories():
-  local_repo = getRepositoriesSince(1)
-  all_repositories = []
-  all_repositories.append(local_repo[0])
-  if type(local_repo) is list:
-    repo_id = local_repo[len(local_repo)-1]["id"]
-  else:
-    repo_id = local_repo["id"]
-  while(local_repo and repo_id < 1000):
-    local_repo = getRepositoriesSince(repo_id)
-    repo_id = local_repo[len(local_repo)-1]["id"]
-    all_repositories.append(local_repo[0])
-  return all_repositories
+    local_repo = getRepositoriesSince(1)
+    all_repositories = []
+    all_repositories.append(get_languages(local_repo[0]['owner']['login'], local_repo[0]['name']))
+    if type(local_repo) is list:
+        repo_id = local_repo[len(local_repo) - 1]["id"]
+    else:
+        repo_id = local_repo["id"]
+    while (local_repo and repo_id < 1000):
+        local_repo = getRepositoriesSince(repo_id)
+        repo_id = local_repo[len(local_repo) - 1]["id"]
+        all_repositories.append(get_languages(local_repo[0]['owner']['login'], local_repo[0]['name']))
+    return all_repositories
+
 
 def write_in_file(data):
-  print("begin")
-  #f=open("data.json","w+")
-  formated_data = json.dumps(data)
-  f = open("data.json","w")
-  f.write(formated_data)
-  f.close()
-  print("finished")
+    formated_data = json.dumps(data)
+    f = open("data.json", "w")
+    f.write(formated_data)
+    f.close()
+
+
+def get_in_shape(data):
+    """
+      Transforme les données brutes récupérées par getAllRepositories en données utilisables simplement pour le chord diagramme et le rayon de soleil :
+       - Un fichier de sortie contenant l'utilisation des langagues au format JSON pour les rayons de soleil : { "Ruby": 34, "C": 50 ...}
+       - Un fichier contenant la force des liens entre languages : [{languages : {"Ruby", C++ }, "lien" : 30}, {languages : {"Ruby", Java }, "lien" : 42}, ... }
+    """
+
+    # Fichier contenant l'utilisation, reste à trouver un compromis entre le nombre et l'utilisation du langage dans le projet
+    comptage = {}
+    for d in data: # Parcours de chacun des repositories
+        for l in d.keys(): # Parcours de chacun des langages utilisés
+          comptage[l] = comptage.get(l, 0) + 1
+    f = open("usage.json", "w")
+    f.write(comptage)
+    f.close()
 
 if __name__ == "__main__":
-  owner = "NellyBARRET"
-  project_name = "bejeweled"
-  #login()
-  # languages = get_languages(owner, project_name)
-  # write_in_file(languages)
-  all_r = getAllRepositories()
-  write_in_file(all_r)
+    all_r = getAllRepositories()
+    print(get_in_shape(all_r))
