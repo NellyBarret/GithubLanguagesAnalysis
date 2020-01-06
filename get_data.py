@@ -4,12 +4,13 @@ from sys import stdout
 from time import sleep
 import pickle
 
+from auth import get_auth_data
+
 base_url = "https://api.github.com/"
 filename = "data4.json"
 # To authenticate, copy "auth.json.skeleton" as "auth.json" (included in .gitignore) and fill it in
 # client_id, oauth_token = auth.get_auth_data("auth.json")
-USER_TOKEN = "NellyBARRET"
-ACCESS_TOKEN = '44e7f84e9ac3898686786c872611e701ac9aa04b'
+USER_TOKEN, ACCESS_TOKEN = get_auth_data("auth.json")
 
 
 def get_repo(repo_name, repo_user):
