@@ -108,10 +108,15 @@ def complete_sahped_datas(until):
 
 
 def get_in_shape(data):
-    """ Transforme les données brutes récupérée en données utilisables simplement pour nos diagrammes :
-     - Un premier fichier, contenant l'utilisation des langagues, indexé selon les années
-     - Un second fichier, contenant une matrice du nombre de projets en commun entre les langages, indexé selon les années => un index des langages et une matrice par année
-     - Un second fichier contenant les métriques par langage (nb_projets, stars, forks) """
+    """ Transforme les données brutes récupérée en données utilisables simplement pour nos diagrammes. Le format des données est le suivant :
+      data = {
+        "matrix": [],
+        "languages": [],
+        "languageToIndex": {},
+        "metrics": {
+          "numberOfProjects": []
+        }
+      }"""
 
     # Pour l'utilisation
     comptage = {}
@@ -163,21 +168,23 @@ def get_in_shape(data):
                                      "stars": metrics[d['langage']]['stars'] + d['stargazers'],
                                      "forks": metrics[d['langage']]['forks'] + d['forks_count']}
 
-    # Et enfin, export des données dans chacun des fichiers
-    f = open("usage.json", "w")
-    f.write(json.dumps(comptage))
-    f.close()
-    f = open("matrice.json", "w")
-    f.write(json.dumps(abscisse) + ',' + json.dumps(matrice))
-    f.close()
-    f = open("metrics.json", "w")
-    f.write(json.dumps(metrics))
+    # Et enfin, mise en forme des données comme prévu, et export des données dans un fichier
+    abscisseIndex = {abscisse[i]: i for i in range(len(abscisse))}
+    data = {"matrix": matrice,
+            "languages": abscisse,
+            "languageToIndex": abscisseIndex,
+            "metrics": {"numberOfProjects": [metrics[lg]['nb_projects'] for lg in abscisse],
+                        "cumulatedPourcentageOfUse": [comptage[lg] for lg in abscisse],
+                        "Cumulatedstars": [metrics[lg]['stargazers'] for lg in abscisse],
+                        "CumulatedForks": [metrics[lg]['forks'] for lg in abscisse]}}
+    f = open("data.json", "w")
+    f.write(json.dumps(data))
     f.close()
 
 
 if __name__ == "__main__":
     data = complete_sahped_datas(700)
     pickle.dump(data, open('pickle', 'wb'))
-
+    print(data)
     data = pickle.load(open('pickle', 'rb'))
     get_in_shape(data)

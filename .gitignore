@@ -1,2 +1,4 @@
 auth.json
-__pycache__
+_*
+.idea
+.DS_Store
