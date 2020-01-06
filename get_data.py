@@ -59,7 +59,7 @@ def shape_data(repo):
     @returns: a dict containing relevant fields of the repo
     """
     current_repo = {}
-    fields = ["language", "year", "stargazers_url", "forks_count"]
+    fields = ["languages_url", "year", "stargazers_url", "forks_count"]
     for field in fields:
         if field == "year":
             # special handling for year field
@@ -131,16 +131,16 @@ def get_in_shape(data):
 
     # Premier parcours pour trouver l'ensemble des langages existants. C'est un double parcours pour simplifier le code de la matrice après
     for d in data:
-        if 'language' in d:
-            if not d['language'] in abscisse:
-                abscisse[d['language']] = cpt
+        if 'languages' in d:
+            if not d['languages'] in abscisse:
+                abscisse[d['languages']] = cpt
 
     # Puis calcul de l'ensemble des données
     for d in data:
 
         # Calcul de l'utilisation de chacun des langages
-        if 'language' in d and 'year' in d:
-            languages = d['language']
+        if 'languages' in d and 'year' in d:
+            languages = d['languages']
             annee = d['year']
             if not (annee in comptage):
                 comptage[annee] = {}
@@ -151,8 +151,8 @@ def get_in_shape(data):
                 comptage[annee][l] = comptage[annee].get(l, 0) + 1 * (languages.get(l, 0) / sum_repo)
 
         # Calcul de la matrice du nombre de projets en commun pour chaque langage
-        if 'language' in d and 'year' in d:
-            languages = d['language']
+        if 'languages' in d and 'year' in d:
+            languages = d['languages']
             annee = d['year']
             if not (annee in matrice):
                 matrice[annee] = [[0] * len(abscisse)] * len(abscisse)
@@ -163,10 +163,10 @@ def get_in_shape(data):
         # Calcul des métriques pour chaque language
         for l in abscisse.keys():
             metrics[l] = {"nb_projects": 0, "stars": 0, "forks": 0}
-        if 'language' in d:
-            metrics[d['langage']] = {"nb_projects": metrics[d['langage']]['nb_projects'] + 1,
-                                     "stars": metrics[d['langage']]['stars'] + d['stargazers'],
-                                     "forks": metrics[d['langage']]['forks'] + d['forks_count']}
+        if 'languages' in d:
+            metrics[d['langages']] = {"nb_projects": metrics[d['langages']]['nb_projects'] + 1,
+                                     "stars": metrics[d['langages']]['stars'] + d['stargazers'],
+                                     "forks": metrics[d['langages']]['forks'] + d['forks_count']}
 
     # Et enfin, mise en forme des données comme prévu, et export des données dans un fichier
     abscisseIndex = {abscisse[i]: i for i in range(len(abscisse))}
@@ -183,8 +183,9 @@ def get_in_shape(data):
 
 
 if __name__ == "__main__":
-    data = complete_shaped_data(700)
+    data = complete_shaped_data(10)
     pickle.dump(data, open('data/pickle', 'wb'))
     print(data)
-    data = pickle.load(open('data/pickle', 'rb'))
-    get_in_shape(data)
+
+    #data = pickle.load(open('data/pickle', 'rb'))
+    #get_in_shape(data)
