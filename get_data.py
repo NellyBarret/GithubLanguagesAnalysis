@@ -112,9 +112,9 @@ def get_in_shape(data):
       data = {
         "matrix": [],
         "languages": [],
-        "languageToIndex": {},
+        "language_to_index": {},
         "metrics": {
-          "numberOfProjects": []
+          "nb_projects": []
         }
       }"""
 
@@ -172,7 +172,7 @@ def get_in_shape(data):
     abscisseIndex = {abscisse[i]: i for i in range(len(abscisse))}
     data = {"matrix": matrice,
             "languages": abscisse,
-            "languageToIndex": abscisseIndex,
+            "language_to_index": abscisseIndex,
             "metrics": {"nb_projects": [metrics[lg]['nb_projects'] for lg in abscisse],
                         "cumulated_use_pourcentage": [comptage[lg] for lg in abscisse],
                         "stars": [metrics[lg]['stargazers'] for lg in abscisse],
