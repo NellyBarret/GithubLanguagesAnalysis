@@ -9,8 +9,7 @@ from auth import get_auth_data
 base_url = "https://api.github.com/"
 filename = "data4.json"
 # To authenticate, copy "auth.json.skeleton" as "auth.json" (included in .gitignore) and fill it in
-# client_id, oauth_token = auth.get_auth_data("auth.json")
-USER_TOKEN, ACCESS_TOKEN = get_auth_data("auth.json")
+USERNAME, ACCESS_TOKEN = get_auth_data("auth.json")
 
 
 def get_repo(repo_name, repo_user):
@@ -21,7 +20,7 @@ def get_repo(repo_name, repo_user):
     @param repo_user: the name of the repo
     """
     complete_url = base_url + f"repos/{repo_user}/{repo_name}"
-    contents = requests.get(complete_url, auth=(USER_TOKEN, ACCESS_TOKEN))
+    contents = requests.get(complete_url, auth=(USERNAME, ACCESS_TOKEN))
     repo = contents.json()
     if "message" in repo:
         if "Bad credentials" in repo["message"]:
@@ -40,7 +39,7 @@ def get_repos_since(since=1):
     @returns: the last id of the scrapped repo and the json content of scrapped repos
     """
     complete_url = base_url + "repositories?since=" + str(since)
-    contents = requests.get(complete_url, auth=(USER_TOKEN, ACCESS_TOKEN))
+    contents = requests.get(complete_url, auth=(USERNAME, ACCESS_TOKEN))
     while "message" in contents.json() and "rate limit" in contents.json()["message"]:
         # waiting for an hour
         for i in range(0, 3601):
@@ -48,7 +47,7 @@ def get_repos_since(since=1):
             stdout.flush()
             sleep(1)
         stdout.write("\n")
-        contents = requests.get(complete_url, auth=(USER_TOKEN, ACCESS_TOKEN))
+        contents = requests.get(complete_url, auth=(USERNAME, ACCESS_TOKEN))
     return contents.json()[-1]["id"], contents.json()  # dernier id du since + les repos
 
 
@@ -73,7 +72,7 @@ def shape_data(repo):
             try:
                 content_field = repo[field]
                 url_field = content_field
-                response = requests.get(url_field, auth=(USER_TOKEN, ACCESS_TOKEN))
+                response = requests.get(url_field, auth=(USERNAME, ACCESS_TOKEN))
                 field_name = field[:-4]
                 if field == "stargazers_url":
                     # special handling for stars field (need to go through each user)
@@ -91,7 +90,7 @@ def shape_data(repo):
     return current_repo
 
 
-def complete_sahped_datas(until):
+def complete_shaped_data(until):
     """ Get full repositories data, truncated by shape_data, since an id
     :type until: int
     :param until: the id where the scrapping will ends
@@ -174,18 +173,18 @@ def get_in_shape(data):
     data = {"matrix": matrice,
             "languages": abscisse,
             "languageToIndex": abscisseIndex,
-            "metrics": {"numberOfProjects": [metrics[lg]['nb_projects'] for lg in abscisse],
-                        "cumulatedPourcentageOfUse": [comptage[lg] for lg in abscisse],
-                        "Cumulatedstars": [metrics[lg]['stargazers'] for lg in abscisse],
-                        "CumulatedForks": [metrics[lg]['forks'] for lg in abscisse]}}
-    f = open("data.json", "w")
+            "metrics": {"nb_projects": [metrics[lg]['nb_projects'] for lg in abscisse],
+                        "cumulated_use_pourcentage": [comptage[lg] for lg in abscisse],
+                        "stars": [metrics[lg]['stargazers'] for lg in abscisse],
+                        "forks": [metrics[lg]['forks'] for lg in abscisse]}}
+    f = open("data/data.json", "w")
     f.write(json.dumps(data))
     f.close()
 
 
 if __name__ == "__main__":
-    data = complete_sahped_datas(700)
-    pickle.dump(data, open('pickle', 'wb'))
+    data = complete_shaped_data(700)
+    pickle.dump(data, open('data/pickle', 'wb'))
     print(data)
-    data = pickle.load(open('pickle', 'rb'))
+    data = pickle.load(open('data/pickle', 'rb'))
     get_in_shape(data)
