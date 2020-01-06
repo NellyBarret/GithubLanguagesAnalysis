@@ -132,8 +132,9 @@ def get_in_shape(data):
     # Premier parcours pour trouver l'ensemble des langages existants. C'est un double parcours pour simplifier le code de la matrice après
     for d in data:
         if 'languages' in d:
-            if not d['languages'] in abscisse:
-                abscisse[d['languages']] = cpt
+            for l in d['languages']:
+                if not l in abscisse:
+                    abscisse[l] = cpt
 
     # Puis calcul de l'ensemble des données
     for d in data:
@@ -156,20 +157,21 @@ def get_in_shape(data):
             annee = d['year']
             if not (annee in matrice):
                 matrice[annee] = [[0] * len(abscisse)] * len(abscisse)
-            for l1 in languages.keys():
-                for l2 in languages.keys():
-                    matrice[abscisse[l1], abscisse[l2]] += 1
+            for l1 in languages:
+                for l2 in languages:
+                    matrice[annee][abscisse[l1]][abscisse[l2]] += 1
 
         # Calcul des métriques pour chaque language
         for l in abscisse.keys():
             metrics[l] = {"nb_projects": 0, "stars": 0, "forks": 0}
         if 'languages' in d:
-            metrics[d['langages']] = {"nb_projects": metrics[d['langages']]['nb_projects'] + 1,
-                                     "stars": metrics[d['langages']]['stars'] + d['stargazers'],
-                                     "forks": metrics[d['langages']]['forks'] + d['forks_count']}
+            for l in d['languages']:
+                metrics[l] = {"nb_projects": metrics[l]['nb_projects'] + 1,
+                                           "stars": metrics[l]['stars'] + d['stargazers'],
+                                           "forks": metrics[l]['forks'] + d['forks_count']}
 
     # Et enfin, mise en forme des données comme prévu, et export des données dans un fichier
-    abscisseIndex = {abscisse[i]: i for i in range(len(abscisse))}
+    abscisseIndex = {i: abscisse[i] for i in abscisse}
     data = {"matrix": matrice,
             "languages": abscisse,
             "language_to_index": abscisseIndex,
@@ -183,9 +185,8 @@ def get_in_shape(data):
 
 
 if __name__ == "__main__":
-    data = complete_shaped_data(10)
-    pickle.dump(data, open('data/pickle', 'wb'))
-    print(data)
+    # data = complete_shaped_data(10)
+    # pickle.dump(data, open('data/pickle', 'wb'))
 
-    #data = pickle.load(open('data/pickle', 'rb'))
-    #get_in_shape(data)
+    data = pickle.load(open('data/pickle', 'rb'))
+    get_in_shape(data)
