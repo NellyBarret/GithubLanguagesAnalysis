@@ -172,7 +172,23 @@ def get_in_shape(data):
 
     # Et enfin, mise en forme des données comme prévu, et export des données dans un fichier
     abscisseIndex = {i: abscisse[i] for i in abscisse}
-    data = {"matrix": matrice,
+
+    # Export des rawData comme dans les données du chord diagram :
+    rawData = {}
+    cpt = 0
+    for d in data:
+        if 'languages' in d and 'year' in d:
+            annee = d['year']
+            if not (annee in rawData):
+                rawData[annee] = []
+            languages = []
+            for i in d['languages']:
+                languages.append(i)
+            rawData[annee].append({"id": cpt, "stars": d['stargazers'], "forks": d['forks_count'], "languages" : languages})
+            cpt += 1
+    print(rawData)
+
+    """data = {"matrix": matrice,
             "languages": abscisse,
             "language_to_index": abscisseIndex,
             "metrics": {"nb_projects": [metrics[lg]['nb_projects'] for lg in abscisse],
@@ -181,12 +197,12 @@ def get_in_shape(data):
                         "forks": [metrics[lg]['forks'] for lg in abscisse]}}
     f = open("data/data.json", "w")
     f.write(json.dumps(data))
-    f.close()
+    f.close()"""
 
 
 if __name__ == "__main__":
     # data = complete_shaped_data(10)
     # pickle.dump(data, open('data/pickle', 'wb'))
 
-    data = pickle.load(open('data/pickle', 'rb'))
-    get_in_shape(data)
+    #data = pickle.load(open('data/pickle', 'rb'))
+    #get_in_shape(data)
