@@ -89,363 +89,396 @@
 	</body>
 
 	<script>
-		rawData = {
-		  "2019": 
-			[
-			  {
-				"id": 0,
-				"stars": 20,
-				"forks": 5,
-				"languages": ["js", "python", "bash"]
-			  },
-			  {
-				"id": 1,
-				"stars": 100,
-				"forks": 20,
-				"languages": ["java", "bash"]
-			  },
-			  {
-				"id": 2,
-				"stars": 3,
-				"forks": 1,
-				"languages": ["python", "bash"]
-			  },
-			  {
-				"id": 3,
-				"stars": 2000,
-				"forks": 53,
-				"languages": ["go", "c++"]
-			  },
-			  {
-				"id": 4,
-				"stars": 50,
-				"forks": 7,
-				"languages": ["java"]
-			  }
-			],
-		  "2018": 
-			[
-			  {
-				"id": 0,
-				"stars": 20,
-				"forks": 5,
-				"languages": ["js", "bash"]
-			  },
-			  {
-				"id": 1,
-				"stars": 100,
-				"forks": 20,
-				"languages": ["java", "bash"]
-			  },
-			  {
-				"id": 2,
-				"stars": 3,
-				"forks": 1,
-				"languages": ["python", "bash"]
-			  },
-			  {
-				"id": 3,
-				"stars": 2000,
-				"forks": 53,
-				"languages": ["go", "c++", "scala"]
-			  },
-			  {
-				"id": 4,
-				"stars": 50,
-				"forks": 7,
-				"languages": ["java"]
-			  },
-			  {
-				"id": 5,
-				"stars": 50,
-				"forks": 7,
-				"languages": ["java", "scala", "c++"]
-			  }
-			],
-		};
+		addChordDiag("data/data.json");
 		
-		addChordDiag(rawData);
-		
-		function addChordDiag(rawData) {
-		  link_methods = {
-			0: "raw",
-			1: "symetric",
-			2: "language_based"
-		  }
-		  link_method = 2;
-		  
+		function addChordDiag(filepath) {
 		  /////////////////
 		  // Data Import //
 		  /////////////////
-		  
-		  dataByYear = {};
-		  metrics = [];
-		  
-		  // function for adding a new language to the data
-		  function includeLanguage(data, lang) {
-			if (!data.languages.includes(lang)) {
-			  data.languageToIndex[lang] = data.languages.length;
+		  d3.json(filepath).then(function (dataByYear) {
+			years = Object.keys(dataByYear).map(y => parseInt(y));
+			minYear = d3.min(years);
+			maxYear = d3.max(years);
+			metrics = [];
+			
+			maxLink = 0;
+	
+			for (year in dataByYear) {
+			  ////////////////////////
+			  // Data Preprocessing //
+			  ////////////////////////
+			  data = dataByYear[year];
+			  
+			  // Loading metrics list
+			  if (year == years[0]) {
+				metrics = Object.keys(data.metrics);
+			  }
+	
+			  // Normalizing metrics
+			  var preprocess = d => Math.sqrt(d);
+	
 			  for (metric in data.metrics) {
-				data.metrics[metric].push(0);
+				newMetric = data.metrics[metric].map(preprocess);
+				var max = Math.max(...newMetric);
+				newMetric = newMetric.map(e => e / max);
+				data.metrics[metric + "_normalized"] = newMetric;
 			  }
-			  data.languages.push(lang);
-	  
-			  for (arr of data.matrix) {
-				arr.push(0);
-			  }
-			  data.matrix.push(Array(data.languages.length).fill(0));
 			}
-		  }
-		  
-		  for (year in rawData) {
-			data =
-			   {
-				   "matrix": [],
-				  "languages": [],
-				  "languageToIndex": {},
-				  "metrics": {
-					"numberOfProjects": [],
-					"stars": [],
-					"forks": []
+	
+			////////////////
+			// Parameters //
+			////////////////
+			
+			// size
+			width = 960;
+			height = 450;
+	
+			// diagram
+			outerRadius = Math.min(width, height) * 0.5;
+			innerRadius = outerRadius - 64;
+			minArcLength = 20;
+			maxArcLength = 60;
+			padAngle = .04;
+			color = d3.scaleOrdinal(d3.schemeCategory10);
+			fill_opacity = 0.67;
+	
+			// animation
+			background_opacity = 0.2;
+			transitionTime = 500;
+	
+			///////////////
+			// Interface //
+			///////////////
+	
+			year = minYear;
+			metric = metrics[0];
+			
+			filterMin = 1;
+			filterMax = 10000;
+			maxPourcentage = 100;
+			languageFilter = filterMax;
+			languagePourcentage = maxPourcentage;
+			linkFilter = filterMax;
+			linkPourcentage = maxPourcentage;
+			
+			linkMethods = [
+			  "raw",
+			  "symetric",
+			  "language_based" // 
+			];
+			
+			linkMethod = linkMethods[0];
+	
+			const ui = d3.select("#chordDiagDiv")
+						.append("div");
+	
+			//// Years
+			
+			ui.append("input")
+			  .attr("id", "yearSlider")
+			  .attr("type", "range")
+			  .attr("min", minYear)
+			  .attr("max", maxYear)
+			  .attr("value", minYear)
+			  .on("input", function() {
+				year = this.value;
+				d3.select("#yearSpan")
+				  .text(` year ${year}`);
+				draw();
+			});
+	
+			ui.append("span")
+			  .attr("id", "yearSpan")
+			  .text(` year ${minYear}`);
+	
+			//// Metrics
+			
+			ui.append("span")
+				.attr("class", "label")
+				.text("Metric: ");
+			
+			const selectMetric = ui.append("select");
+	
+			selectMetric.selectAll("option")
+			  .data(metrics)
+			  .join("option")
+			  .attr("value", d => d)
+			  .text(d => d);
+	
+			selectMetric.on("change", function() {
+				metric = this.value;
+				draw();
+			})
+			
+			//// Filters
+			
+			ui.append("span")
+				.attr("class", "label")
+				.text("Filters: ");
+	
+			// Language Filter
+			
+			ui.append("input")
+			  .attr("id", "languageFilterSlider")
+			  .attr("type", "range")
+			  .attr("min", filterMin)
+			  .attr("max", filterMax)
+			  .attr("value", filterMax)
+			  .on("input", function() {
+				languageFilter = this.value;
+				  languagePourcentage = languageFilter * maxPourcentage / filterMax;
+				d3.select("#languageFilterSpan")
+				  .text(` top ${languagePourcentage}% of languages`);
+				draw();
+			});
+			
+			ui.append("span")
+			  .attr("id", "languageFilterSpan")
+			  .text(` top ${languagePourcentage}% of languages`);
+			
+			// Link Filter
+			
+			ui.append("input")
+				.attr("class", "label")
+			  .attr("id", "linkFilterSlider")
+			  .attr("type", "range")
+			  .attr("min", filterMin)
+			  .attr("max", filterMax)
+			  .attr("value", filterMax)
+			  .on("input", function() {
+				linkFilter = this.value;
+					 linkPourcentage = linkFilter * maxPourcentage / filterMax;
+				d3.select("#linkFilterSpan")
+				  .text(` top ${linkPourcentage}% of links`);
+				draw();
+			});
+			
+			ui.append("span")
+			  .attr("id", "linkFilterSpan")
+			  .text(` top ${linkPourcentage}% of links`);
+			
+			// Link method
+			
+			ui.append("span")
+				.attr("class", "label")
+				.text("Link method: ");
+			
+			const selectLM = ui.append("select");
+	
+			selectLM.selectAll("option")
+			  .data(linkMethods)
+			  .join("option")
+			  .attr("value", d => d)
+			  .text(d => d);
+	
+			selectLM.on("change", function() {
+				linkMethod = this.value;
+				draw();
+			})
+	
+			////////////
+			// Events //
+			////////////   
+	
+			var arc_mouseenter = function(d) {
+			  svg.selectAll("path").transition().duration(transitionTime)
+				   .style("opacity", background_opacity);
+			  d3.select(this).transition()
+				   .style("opacity", 1);
+			  svg.selectAll(".ribbon")
+				 .filter(r => r.source.index === d.index || r.target.index === d.index)
+				 .each(function (r) {
+					d3.select(`#arc_${r.source.index}`).transition()
+					  .style("opacity", 1);
+					d3.select(`#arc_${r.target.index}`).transition()
+					  .style("opacity", 1);
+				  })
+				 .transition()
+				 .style("opacity", 1);
+			}
+	
+			var arc_mouseleave = function(d) {
+			  svg.selectAll("path").transition().duration(transitionTime)
+				   .style("opacity", 1);
+			}
+	
+			var ribbon_mouseenter = function(d) {
+			  svg.selectAll("path").transition().duration(transitionTime)
+				   .style("opacity", background_opacity);
+			  d3.select(this).transition()
+				   .style("opacity", 1);
+			  d3.select(`#arc_${d.source.index}`).transition()
+				   .style("opacity", 1);
+			  d3.select(`#arc_${d.target.index}`).transition()
+				   .style("opacity", 1);
+			}
+	
+			var ribbon_mouseleave = function(d) {
+			  svg.selectAll("path").transition().duration(transitionTime)
+				   .style("opacity", 1);
+			}
+	
+			/////////////
+			// Drawing //
+			/////////////
+	
+			function draw() {
+			  d3.select("#chordDiagram").remove();
+	
+			  svg = d3.select("body").append("svg")
+				.attr("id", "chordDiagram")
+				.attr("viewBox", [-width / 2, -height / 2, width, height])
+				.attr("font-size", 10)
+				.attr("font-family", "sans-serif")
+				.style("width", "100%")
+				.style("height", "auto");
+	
+			  ribbon = d3.ribbon()
+				.radius(innerRadius);
+			  arc = d3.arc()
+				.innerRadius(innerRadius)
+				.outerRadius(d => innerRadius + minArcLength + dataByYear[year].metrics[metric + "_normalized"][d.index] * (maxArcLength - minArcLength));
+			  chord = d3.chord()
+				.padAngle(padAngle)
+				.sortSubgroups(d3.descending)
+				.sortChords(d3.descending)
+			  
+			  filtered = filterData(languagePourcentage, linkPourcentage, linkMethod,
+									metric, dataByYear[year]);
+			  filteredLanguages = filtered[0];
+			  filteredMatrix = filtered[1];
+			  
+			  chords = chord(filteredMatrix);
+	
+			  group = svg.append("g")
+				.attr("id", "arcs")
+				.selectAll("g")
+				.data(chords.groups)
+				.join("g");
+	
+			  group.append("path")
+				  .attr("id", d => `arc_${d.index}`)
+				  .attr("fill", d => color(d.index))
+				  .attr("stroke", d => color(d.index))
+				  .attr("d", arc)
+				  .on("mouseenter", arc_mouseenter)
+				  .on("mouseleave", arc_mouseleave);
+	
+			  group.append("text")
+				  .each(d => { d.angle = (d.startAngle + d.endAngle) / 2; })
+				  .attr("dy", ".35em")
+				  .attr("transform", d => `
+					rotate(${(d.angle * 180 / Math.PI - 90)})
+					translate(${innerRadius + 26})
+					${d.angle > Math.PI ? "rotate(180)" : ""}
+				  `)
+				  .attr("text-anchor", d => d.angle > Math.PI ? "end" : null)
+				  .text(d => newLanguages[d.index]);
+	
+			  svg.append("g")
+				.attr("id", "ribbons")
+				.attr("fill-opacity", fill_opacity)
+				.selectAll("path")
+				.data(chords)
+				.join("path")
+				  .attr("class", "ribbon")
+				  .attr("id", d => `ribbon_${d.source.index}_${d.target.index}`)
+				  .attr("stroke", d => d3.rgb(color(d.source.index)).darker())
+				  .attr("fill", d => color(d.source.index))
+				  .attr("d", ribbon)
+				  .on("mouseenter", ribbon_mouseenter)
+				  .on("mouseleave", ribbon_mouseleave);
+			}
+	
+			draw();
+			
+			function filterData(languagePourcentage, linkPourcentage, linkMethod,
+								metric, data) {
+			  languages = data.languages;
+			  matrix = data.matrix;
+			  metrics = data.metrics;
+			  newMatrix = [];
+			  
+			  languageFractile = languagePourcentage / 100;
+			  
+			  linkFractile = linkPourcentage / 100;
+			  links = {};
+			  
+			  // Copying the matrix
+			  
+			  for (i = 0; i < matrix.length; ++i) {
+				newMatrix.push(matrix[i].slice());
+			  }
+			  
+			  // Keeping only top `languageFractile` links
+			  
+			  newLanguages = languages.slice();
+			  indexToMetric = {};
+			  
+			  for (i = 0; i < languages.length; ++i) {
+				indexToMetric[i] = metrics[metric][i];
+			  }
+			  
+			  bestLanguages = Object.entries(indexToMetric).sort(([k1, v1], [k2, v2]) => v1 < v2);
+			  nbLanguages = languages.length;
+	
+			  languagesToDelete = bestLanguages.slice(Math.ceil(nbLanguages * languageFractile), nbLanguages).map(entry => parseInt(entry[0]));
+			  
+			  languagesToDelete = languagesToDelete.sort().reverse();
+			  
+			  //languagesToDelete = [0,1,2];
+			  
+			  for (i of languagesToDelete) {
+				languages = languages.splice(i,1);
+				newMatrix = newMatrix.splice(i,1);
+				
+				for (j = 0; j < newMatrix.length; ++j) {
+				  newMatrix[j] = newMatrix[j].splice(i,1);
+				}
+			  }
+			  
+			  console.log(newMatrix);
+			  
+			  // Changing links format and registering them for sorting
+			  
+			  for (i = 0; i < newMatrix.length; ++i) {
+				  for (j = 0; j < newMatrix.length; ++j) {
+				  if (i < j) {
+					if (linkMethod === "symetric") {
+					  min = Math.min(metrics["number_of_projects"][i], data.metrics["number_of_projects"][j]);
+					  newMatrix[i][j] /= min;
+					  newMatrix[j][i] /= min;
+					}
+					else if (linkMethod === "language_based") {
+					  newMatrix[i][j] /= metrics["number_of_projects"][i];
+					  newMatrix[j][i] /= metrics["number_of_projects"][j];
+					}
+					
+					links[i * matrix.length + j] = newMatrix[i][j] + newMatrix[j][i];
 				  }
-			   };
-	  
-			for (project of rawData[year]) { 
-			  // initializing new languages
-			  for (lang1 of project.languages) {
-				includeLanguage(data, lang1);
-				i = data.languageToIndex[lang1];
-				
-				// Updating metrics
-				++data.metrics.numberOfProjects[i];
-				data.metrics.stars[i] += project.stars;
-				data.metrics.forks[i] += project.forks;
-				
-				// Updating matrix
-				for (lang2 of project.languages) {
-				  if (lang1 != lang2) {
-					includeLanguage(data, lang2);
-					j = data.languageToIndex[lang2];
-					++data.matrix[i][j];
+				  else if (i == j) {
+					newMatrix[i][j] = 0;
 				  }
 				}
 			  }
-			}
-			
-			////////////////////////
-			// Data Preprocessing //
-			////////////////////////
-	  
-			lm = link_methods[link_method];
-			// normalizing the links
-			for (i = 0; i < data.languages.length; ++i) {
-			  for (j = 0; j < data.languages.length; ++j) {
-				if (i != j) {
-				  if (lm === "symetric") {
-					min = Math.min(data.metrics.numberOfProjects[i], data.metrics.numberOfProjects[j]);
-					data.matrix[i][j] /= min;
-				  }
-				  else if (lm === "language_based") {
-					data.matrix[i][j] /= data.metrics.numberOfProjects[i];
-				  }
-				}
+			  
+			  // Keeping only top `linkFractile` links
+			  
+			  bestLinks = Object.entries(links).sort(([k1, v1], [k2, v2]) => v1 < v2);
+			  nbLinks = bestLinks.length;
+			  
+			  linksToDelete = bestLinks.slice(Math.ceil(nbLinks * linkFractile), nbLinks);
+			  for (const [k,_] of linksToDelete) {
+				i = k / newMatrix.length | 0;
+				j = k % newMatrix.length;
+				newMatrix[i][j] = 0;
+				newMatrix[j][i] = 0;
 			  }
+			  
+			  return [newLanguages, newMatrix];
 			}
-		  
-			// Loading metrics list
-			if (year === Object.keys(rawData)[0]) {
-			  metrics = Object.keys(data.metrics);
-			}
-			
-			// Normalizing metrics
-			var preprocess = d => Math.sqrt(d);
-			
-			for (metric in data.metrics) {
-			  newMetric = data.metrics[metric].map(preprocess);
-			  var max = Math.max(...newMetric);
-			  newMetric = newMetric.map(e => e / max);
-			  data.metrics[metric + "_normalized"] = newMetric;
-			}
-			
-			dataByYear[year] = data;
-		  }
-		  
-		  ////////////////
-		  // Parameters //
-		  ////////////////
-		  
-		  // size
-		  width = 960;
-		  height = 450;
-		  
-		  // diagram
-		  outerRadius = Math.min(width, height) * 0.5;
-		  innerRadius = outerRadius - 64;
-		  minArcLength = 20;
-		  maxArcLength = 60;
-		  padAngle = .04;
-		  color = d3.scaleOrdinal(d3.schemeCategory10);
-		  fill_opacity = 0.67;
-		  
-		  // animation
-		  background_opacity = 0.2;
-		  transitionTime = 500;
-	  
-		  ///////////////
-		  // Interface //
-		  ///////////////
-	  
-		  years = Object.keys(dataByYear).map(y => parseInt(y));
-		  minYear = d3.min(years);
-		  maxYear = d3.max(years);
-		  year = minYear;
-		  metric = metrics[0];
-	  
-		  const ui = d3.select("#chordDiagDiv")
-					  .append("div");
-	  
-		  ui.append("input")
-			.attr("id", "yearSlider")
-			.attr("type", "range")
-			.attr("min", minYear)
-			.attr("max", maxYear)
-			.attr("value", minYear)
-			.on("input", function() {
-			  year = this.value;
-			  d3.select("#yearSpan")
-				.text(` year ${year}`);
-			  draw(year, metric);
 		  });
-		  
-		   ui.append("span")
-			.attr("class", "ui")
-			.attr("id", "yearSpan")
-			.text(` year ${minYear}`);
-		  
-		  const parameters = ui.append("span");
-		  const selectMetric = ui.append("select");
-	  
-		  selectMetric.selectAll("option")
-			.data(metrics)
-			.join("option")
-			.attr("value", d => d)
-			.text(d => d)
-			.on("change", function() {
-			  metric = this.value;
-			  draw(year, metric);
-		  })
-	  
-		  ////////////
-		  // Events //
-		  ////////////   
-	  
-		  var arc_mouseenter = function(d) {
-			svg.selectAll("path").transition().duration(transitionTime)
-				 .style("opacity", background_opacity);
-			d3.select(this).transition()
-				 .style("opacity", 1);
-			svg.selectAll(".ribbon")
-			   .filter(r => r.source.index === d.index || r.target.index === d.index)
-			   .each(function (r) {
-				  d3.select(`#arc_${r.source.index}`).transition()
-					.style("opacity", 1);
-				  d3.select(`#arc_${r.target.index}`).transition()
-					.style("opacity", 1);
-				})
-			   .transition()
-			   .style("opacity", 1);
-		  }
-	  
-		  var arc_mouseleave = function(d) {
-			svg.selectAll("path").transition().duration(transitionTime)
-				 .style("opacity", 1);
-		  }
-	  
-		  var ribbon_mouseenter = function(d) {
-			svg.selectAll("path").transition().duration(transitionTime)
-				 .style("opacity", background_opacity);
-			d3.select(this).transition()
-				 .style("opacity", 1);
-			d3.select(`#arc_${d.source.index}`).transition()
-				 .style("opacity", 1);
-			d3.select(`#arc_${d.target.index}`).transition()
-				 .style("opacity", 1);
-		  }
-	  
-		  var ribbon_mouseleave = function(d) {
-			svg.selectAll("path").transition().duration(transitionTime)
-				 .style("opacity", 1);
-		  }
-	  
-		  /////////////
-		  // Drawing //
-		  /////////////
-	  
-		  function draw(year, metric) {
-			d3.select("#chordDiagram").remove();
-	  
-			svg = d3.select("#chordDiagDiv").append("svg")
-			  .attr("id", "chordDiagram")
-			  .attr("viewBox", [-width / 2, -height / 2, width, height])
-			  .attr("font-size", 10)
-			  .attr("font-family", "sans-serif")
-			  .style("width", "100%")
-			  .style("height", "auto");
-	  
-			ribbon = d3.ribbon()
-			  .radius(innerRadius);
-			arc = d3.arc()
-			  .innerRadius(innerRadius)
-			  .outerRadius(d => innerRadius + minArcLength + dataByYear[year].metrics[metric + "_normalized"][d.index] * (maxArcLength - minArcLength));
-			chord = d3.chord()
-			  .padAngle(padAngle)
-			  .sortSubgroups(d3.descending)
-			  .sortChords(d3.descending)
-	  
-			chords = chord(dataByYear[year].matrix);
-	  
-			group = svg.append("g")
-			  .attr("id", "arcs")
-			  .selectAll("g")
-			  .data(chords.groups)
-			  .join("g");
-	  
-			group.append("path")
-				.attr("id", d => `arc_${d.index}`)
-				.attr("fill", d => color(d.index))
-				.attr("stroke", d => color(d.index))
-				.attr("d", arc)
-				.on("mouseenter", arc_mouseenter)
-				.on("mouseleave", arc_mouseleave);
-	  
-			group.append("text")
-				.each(d => { d.angle = (d.startAngle + d.endAngle) / 2; })
-				.attr("dy", ".35em")
-				.attr("transform", d => `
-				  rotate(${(d.angle * 180 / Math.PI - 90)})
-				  translate(${innerRadius + 26})
-				  ${d.angle > Math.PI ? "rotate(180)" : ""}
-				`)
-				.attr("text-anchor", d => d.angle > Math.PI ? "end" : null)
-				.text(d => dataByYear[year].languages[d.index]);
-	  
-			svg.append("g")
-			  .attr("id", "ribbons")
-			  .attr("fill-opacity", fill_opacity)
-			  .selectAll("path")
-			  .data(chords)
-			  .join("path")
-				.attr("class", "ribbon")
-				.attr("id", d => `ribbon_${d.source.index}_${d.target.index}`)
-				.attr("stroke", d => d3.rgb(color(d.source.index)).darker())
-				.attr("fill", d => color(d.source.index))
-				.attr("d", ribbon)
-				.on("mouseenter", ribbon_mouseenter)
-				.on("mouseleave", ribbon_mouseleave);
-		  }
-	  
-		  draw(year, metric);
 		}
-	  </script>
+	</script>
 </html>
 
