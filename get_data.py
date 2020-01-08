@@ -140,15 +140,18 @@ def get_in_shape(data):
             if not (d['year'] in calcul.keys()):  # Si elle n'existe pas encore, on la génère
                 calcul[d['year']] = {"languages": []}
         if 'languages' in d:
-            for l in d['languages']: # Pour chacun des languages de ce repo
+            for l in d['languages']:  # Pour chacun des languages de ce repo
                 if not l in calcul[d['year']]['languages']:
                     calcul[d['year']]['languages'].append(l)
 
     # Génération du language to index et des champs internes à chaque année (matrice et métriques), initialisés à 0
     for year in calcul.keys():
-        calcul[year]['languages_to_index'] = {calcul[year]['languages'][i]: i for i in range(len(calcul[year]['languages']))}
-        calcul[year]['matrix'] = [[0] * len(calcul[year]['languages'])] * len(calcul[year]['languages'])
-        calcul[year]['metrics'] = {'number_of_projects': [0] * len(calcul[year]['languages']), 'stars': [0] * len(calcul[year]['languages']), 'forks': [0] * len(calcul[year]['languages'])}
+        calcul[year]['languages_to_index'] = {calcul[year]['languages'][i]: i for i in
+                                              range(len(calcul[year]['languages']))}
+        calcul[year]['matrix'] = [[0] * len(calcul[year]['languages']) for i in range(len(calcul[year]['languages']))]
+        calcul[year]['metrics'] = {'number_of_projects': [0] * len(calcul[year]['languages']),
+                                   'stars': [0] * len(calcul[year]['languages']),
+                                   'forks': [0] * len(calcul[year]['languages'])}
 
     # Second parcours des données pour remplir les champs vides
     cpt = 0
@@ -162,24 +165,25 @@ def get_in_shape(data):
                 calcul[d['year']]['metrics']['stars'][language_index] += d['stargazers']
                 calcul[d['year']]['metrics']['forks'][language_index] += d['forks_count']
 
-
                 # Compléter la matrice
                 for lang2 in d['languages']:
                     language_index2 = calcul[d['year']]['languages_to_index'][lang2]
                     calcul[d['year']]['matrix'][language_index][language_index2] += 1
 
+    # Calcul de l'évolution
+    #print(calcul)
     return calcul
 
 
 if __name__ == "__main__":
     # Début janvier 2020, il y a un peu plus de 232367000 dépots sur gitlab
     # On va tirer aléatoirement dedans
-    data = []
-    for i in range(1000):
+    """data = []
+    for i in range(10):
         data = data + random_shaped_data(232367000)
 
-    pickle.dump(data, open('data/pickle', 'wb'))
-    data = pickle.load(open('data/pickle', 'rb'))
+    pickle.dump(data, open('data/pickle', 'wb'))"""
+    data = pickle.load(open('data/pickle1', 'rb'))
     f = open("data/data.json", "w")
     f.write(json.dumps(get_in_shape(data)))
     f.close()
