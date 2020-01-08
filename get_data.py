@@ -130,108 +130,55 @@ def random_shaped_data(maximum):
 
 
 def get_in_shape(data):
-    """ Transforme les données brutes récupérée en données utilisables simplement pour nos diagrammes. Le format des données est le suivant :
-      data = {
-        "matrix": [],
-        "languages": [],
-        "language_to_index": {},
-        "metrics": {
-          "nb_projects": []
-        }
-      }"""
+    """ Transforme les données brutes récupérée en données utilisables simplement pour nos diagrammes."""
 
-    # Pour l'utilisation
-    comptage = {}
+    calcul = {}
 
-    # Pour la matrice
-    abscisse = {}
-    matrice = {}
-    cpt = 0
-
-    # Pour les métriques
-    metrics = {}
-
-    # Premier parcours pour trouver l'ensemble des langages existants. C'est un double parcours pour simplifier le code de la matrice après
+    # Premier parcours pour trouver l'ensemble des années existantes, et l'ensemble des langages existants par année
     for d in data:
+        if 'year' in d:  # on a bien une année dans ce repo
+            if not (d['year'] in calcul.keys()):  # Si elle n'existe pas encore, on la génère
+                calcul[d['year']] = {"languages": []}
         if 'languages' in d:
-            for l in d['languages']:
-                if not l in abscisse:
-                    abscisse[l] = cpt
+            for l in d['languages']: # Pour chacun des languages de ce repo
+                if not l in calcul[d['year']]['languages']:
+                    calcul[d['year']]['languages'].append(l)
 
-    # Puis calcul de l'ensemble des données
+    # Génération du language to index et des champs internes à chaque année (matrice et métriques), initialisés à 0
+    for year in calcul.keys():
+        calcul[year]['languages_to_index'] = {calcul[year]['languages'][i]: i for i in range(len(calcul[year]['languages']))}
+        calcul[year]['matrix'] = [[0] * len(calcul[year]['languages'])] * len(calcul[year]['languages'])
+        calcul[year]['metrics'] = {'number_of_projects': [0] * len(calcul[year]['languages']), 'stars': [0] * len(calcul[year]['languages']), 'forks': [0] * len(calcul[year]['languages'])}
+
+    # Second parcours des données pour remplir les champs vides
     for d in data:
+        if 'year' in d and 'languages' in d:
+            for lang in d['languages']: # Parcours des languages du dépot un à un
 
-        # Calcul de l'utilisation de chacun des langages
-        if 'languages' in d and 'year' in d:
-            languages = d['languages']
-            annee = d['year']
-            if not (annee in comptage):
-                comptage[annee] = {}
-            sum_repo = 0
-            for l in languages.keys():
-                sum_repo += languages.get(l, 0)
-            for l in languages.keys():  # Parcours de chacun des langages utilisés
-                comptage[annee][l] = comptage[annee].get(l, 0) + 1 * (languages.get(l, 0) / sum_repo)
+                # Compléter les métriques
+                language_index = calcul[d['year']]['languages_to_index'][lang]
+                calcul[d['year']]['metrics']['number_of_projects'][language_index] += 1
+                calcul[d['year']]['metrics']['stars'][language_index] += d['stargazers']
+                calcul[d['year']]['metrics']['forks'][language_index] += d['forks_count']
 
-        # Calcul de la matrice du nombre de projets en commun pour chaque langage
-        if 'languages' in d and 'year' in d:
-            languages = d['languages']
-            annee = d['year']
-            if not (annee in matrice):
-                matrice[annee] = [[0] * len(abscisse)] * len(abscisse)
-            for l1 in languages:
-                for l2 in languages:
-                    matrice[annee][abscisse[l1]][abscisse[l2]] += 1
 
-        # Calcul des métriques pour chaque language
-        for l in abscisse.keys():
-            metrics[l] = {"nb_projects": 0, "stars": 0, "forks": 0}
-        if 'languages' in d:
-            for l in d['languages']:
-                metrics[l] = {"nb_projects": metrics[l]['nb_projects'] + 1,
-                              "stars": metrics[l]['stars'] + d['stargazers'],
-                              "forks": metrics[l]['forks'] + d['forks_count']}
+                # Compléter la matrice
+                for lang2 in d['languages']:
+                    language_index2 = calcul[d['year']]['languages_to_index'][lang2]
+                    calcul[d['year']]['matrix'][language_index][language_index2] += 1
 
-    # Et enfin, mise en forme des données comme prévu, et export des données dans un fichier
-    abscisseIndex = {i: abscisse[i] for i in abscisse}
-
-    # Export des rawData comme dans les données du chord diagram :
-    rawData = {}
-    cpt = 0
-    for d in data:
-        if 'languages' in d and 'year' in d:
-            annee = d['year']
-            if not (annee in rawData):
-                rawData[annee] = []
-            languages = []
-            for i in d['languages']:
-                languages.append(i)
-            rawData[annee].append(
-                {"id": cpt, "stars": d['stargazers'], "forks": d['forks_count'], "languages": languages})
-            cpt += 1
-    print(rawData)
-
-    """data = {"matrix": matrice,
-            "languages": abscisse,
-            "language_to_index": abscisseIndex,
-            "metrics": {"nb_projects": [metrics[lg]['nb_projects'] for lg in abscisse],
-                        "cumulated_use_pourcentage": [comptage[lg] for lg in abscisse],
-                        "stars": [metrics[lg]['stargazers'] for lg in abscisse],
-                        "forks": [metrics[lg]['forks'] for lg in abscisse]}}
-    f = open("data/data.json", "w")
-    f.write(json.dumps(data))
-    f.close()"""
+    return calcul
 
 
 if __name__ == "__main__":
     # Début janvier 2020, il y a un peu plus de 232367000 dépots sur gitlab
     # On va tirer aléatoirement dedans
-    '''data = []
-    for i in range(10):
-        data.append(random_shaped_data(232367000))
-    print(data)'''
+    """data = []
+    for i in range(2):
+        data = data + random_shaped_data(232367000)
+    print(data)
 
-    #pickle.dump(data, open('data/pickle', 'wb'))
+    pickle.dump(data, open('data/pickle', 'wb'))"""
 
     data = pickle.load(open('data/pickle', 'rb'))
-    get_in_shape(data)
+    print(get_in_shape(data)['2016'])
