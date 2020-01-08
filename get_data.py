@@ -191,13 +191,13 @@ def get_in_shape(data):
 if __name__ == "__main__":
     # Début janvier 2020, il y a un peu plus de 232367000 dépots sur gitlab
     # On va tirer aléatoirement dedans
-    """data = []
+    data = []
     for i in range(15):
         print("Étape" + str(i))
         data = data + random_shaped_data(232367000)
 
-    pickle.dump(data, open('data/pickle', 'wb'))"""
-    data = pickle.load(open('data/pickle1', 'rb'))
+    pickle.dump(data, open('data/pickle', 'wb'))
+    data = pickle.load(open('data/pickle', 'rb'))
     f = open("data/data.json", "w")
     f.write(json.dumps(get_in_shape(data)))
     f.close()
