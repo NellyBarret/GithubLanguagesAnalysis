@@ -108,6 +108,7 @@ def complete_shaped_data(until):
             complete.append(shape_data(get_repo(name, user)))
     return complete
 
+
 def random_shaped_data(maximum):
     """ Get full repositories data, truncated by shape_data, at a random place
     :type until: int
@@ -116,12 +117,15 @@ def random_shaped_data(maximum):
     """
     complete = []
     alea = random.randint(0, maximum)
-    print(alea)
     actual, contents = get_repos_since(alea)
     for repo in contents:
         name = repo["name"]
         user = repo["owner"]["login"]
-        complete.append(shape_data(get_repo(name, user)))
+        try:
+            complete.append(shape_data(get_repo(name, user)))
+        except:
+            print("[WARN] erreur répcupération infos repo " + str(repo['id']))
+            pass
     return complete
 
 
@@ -185,8 +189,8 @@ def get_in_shape(data):
         if 'languages' in d:
             for l in d['languages']:
                 metrics[l] = {"nb_projects": metrics[l]['nb_projects'] + 1,
-                                           "stars": metrics[l]['stars'] + d['stargazers'],
-                                           "forks": metrics[l]['forks'] + d['forks_count']}
+                              "stars": metrics[l]['stars'] + d['stargazers'],
+                              "forks": metrics[l]['forks'] + d['forks_count']}
 
     # Et enfin, mise en forme des données comme prévu, et export des données dans un fichier
     abscisseIndex = {i: abscisse[i] for i in abscisse}
@@ -202,7 +206,8 @@ def get_in_shape(data):
             languages = []
             for i in d['languages']:
                 languages.append(i)
-            rawData[annee].append({"id": cpt, "stars": d['stargazers'], "forks": d['forks_count'], "languages" : languages})
+            rawData[annee].append(
+                {"id": cpt, "stars": d['stargazers'], "forks": d['forks_count'], "languages": languages})
             cpt += 1
     print(rawData)
 
@@ -221,13 +226,12 @@ def get_in_shape(data):
 if __name__ == "__main__":
     # Début janvier 2020, il y a un peu plus de 232367000 dépots sur gitlab
     # On va tirer aléatoirement dedans
-    result = []
-    for i in range(2):
-        result.append(random_shaped_data(232367000))
-    print(result)
+    '''data = []
+    for i in range(10):
+        data.append(random_shaped_data(232367000))
+    print(data)'''
 
-    #data = complete_shaped_data(10)
     #pickle.dump(data, open('data/pickle', 'wb'))
 
-    #data = pickle.load(open('data/pickle', 'rb'))
-    #get_in_shape(data)
+    data = pickle.load(open('data/pickle', 'rb'))
+    get_in_shape(data)
