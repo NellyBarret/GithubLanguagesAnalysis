@@ -9,9 +9,9 @@ import auth
 base_url = "https://api.github.com/"
 filename = "data4.json"
 # To authenticate, copy "auth.json.skeleton" as "auth.json" (included in .gitignore) and fill it in
-#client_id, oauth_token = auth.get_auth_data("auth.json")
-USER_TOKEN = "NellyBARRET"
-ACCESS_TOKEN = '4bd9e8825dfcbad7a55d377d76b8d15eb9df7139'
+client_id, oauth_token = auth.get_auth_data("auth.json")
+# USER_TOKEN = "NellyBARRET"
+# ACCESS_TOKEN = '15163b47086a111f4292744a46538b10aab55ec3'
 
 
 def get_languages(owner, project_name):
