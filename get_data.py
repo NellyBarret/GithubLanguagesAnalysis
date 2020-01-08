@@ -1,4 +1,6 @@
 import json
+import random
+
 import requests
 from sys import stdout
 from time import sleep
@@ -106,6 +108,22 @@ def complete_shaped_data(until):
             complete.append(shape_data(get_repo(name, user)))
     return complete
 
+def random_shaped_data(maximum):
+    """ Get full repositories data, truncated by shape_data, at a random place
+    :type until: int
+    :param until: the id where the scrapping will ends
+    :return: The json content of scrapped repos
+    """
+    complete = []
+    alea = random.randint(0, maximum)
+    print(alea)
+    actual, contents = get_repos_since(alea)
+    for repo in contents:
+        name = repo["name"]
+        user = repo["owner"]["login"]
+        complete.append(shape_data(get_repo(name, user)))
+    return complete
+
 
 def get_in_shape(data):
     """ Transforme les données brutes récupérée en données utilisables simplement pour nos diagrammes. Le format des données est le suivant :
@@ -201,8 +219,15 @@ def get_in_shape(data):
 
 
 if __name__ == "__main__":
-    # data = complete_shaped_data(10)
-    # pickle.dump(data, open('data/pickle', 'wb'))
+    # Début janvier 2020, il y a un peu plus de 232367000 dépots sur gitlab
+    # On va tirer aléatoirement dedans
+    result = []
+    for i in range(2):
+        result.append(random_shaped_data(232367000))
+    print(result)
+
+    #data = complete_shaped_data(10)
+    #pickle.dump(data, open('data/pickle', 'wb'))
 
     #data = pickle.load(open('data/pickle', 'rb'))
     #get_in_shape(data)
