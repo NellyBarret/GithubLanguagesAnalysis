@@ -151,9 +151,10 @@ def get_in_shape(data):
         calcul[year]['metrics'] = {'number_of_projects': [0] * len(calcul[year]['languages']), 'stars': [0] * len(calcul[year]['languages']), 'forks': [0] * len(calcul[year]['languages'])}
 
     # Second parcours des données pour remplir les champs vides
+    cpt = 0
     for d in data:
         if 'year' in d and 'languages' in d:
-            for lang in d['languages']: # Parcours des languages du dépot un à un
+            for lang in d['languages']:  # Parcours des languages du dépot un à un
 
                 # Compléter les métriques
                 language_index = calcul[d['year']]['languages_to_index'][lang]
@@ -173,12 +174,12 @@ def get_in_shape(data):
 if __name__ == "__main__":
     # Début janvier 2020, il y a un peu plus de 232367000 dépots sur gitlab
     # On va tirer aléatoirement dedans
-    """data = []
-    for i in range(2):
+    data = []
+    for i in range(1000):
         data = data + random_shaped_data(232367000)
-    print(data)
 
-    pickle.dump(data, open('data/pickle', 'wb'))"""
-
+    pickle.dump(data, open('data/pickle', 'wb'))
     data = pickle.load(open('data/pickle', 'rb'))
-    print(get_in_shape(data)['2016'])
+    f = open("data/data.json", "w")
+    f.write(json.dumps(get_in_shape(data)))
+    f.close()
