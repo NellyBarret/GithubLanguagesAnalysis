@@ -19,6 +19,19 @@ body {
   background: #fff;
 }
 
+#title {
+  margin: 20px 0 0 0;
+}
+
+.ui_label {
+  margin: 0 0 0 20px;
+}
+
+.ui_slider {
+  width: 144px;
+  display: inline-block;
+}
+
 #page {
   position: relative;
   overflow-x: hidden;
