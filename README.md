@@ -34,16 +34,8 @@ No installation is required, simply go to https://nellybarret.github.io/GithubLa
 
 ## Contributors
 
-Nelly Barret – Jonathan Cabezas - Luc Gombert - Juliette Reisser
+[Nelly Barret](nelly.barret@etu.univ-lyon1.fr) [website](website.png) – [Jonathan Cabezas](jonathan.cabezas@etu.univ-lyon1.fr) - [Luc Gombert](luc.gombert@etu.univ-lyon1.fr) - [Juliette Reisser](juliette.reisser@etu.univ-lyon1.fr)
 
 Students in [M2 Artificial Intelligence](http://master-info.univ-lyon1.fr/IA/) and [M2 Data Science](http://master-info.univ-lyon1.fr/DS/) in Lyon 1 University.
 
 Supervised by Mr. Aurélien Tabard, our teacher of [Data Vizualisation](https://lyondataviz.github.io/teaching/lyon1-m2/2019/)
-
-<!-- Markdown link & img dfn's -->
-[npm-image]: https://img.shields.io/npm/v/datadog-metrics.svg?style=flat-square
-[npm-url]: https://npmjs.org/package/datadog-metrics
-[npm-downloads]: https://img.shields.io/npm/dm/datadog-metrics.svg?style=flat-square
-[travis-image]: https://img.shields.io/travis/dbader/node-datadog-metrics/master.svg?style=flat-square
-[travis-url]: https://travis-ci.org/dbader/node-datadog-metrics
-[wiki]: https://github.com/yourname/yourproject/wiki
