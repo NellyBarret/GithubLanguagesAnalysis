@@ -170,20 +170,34 @@ def get_in_shape(data):
                     language_index2 = calcul[d['year']]['languages_to_index'][lang2]
                     calcul[d['year']]['matrix'][language_index][language_index2] += 1
 
-    # Calcul de l'évolution
-    #print(calcul)
+    # Calcul de l'évolution en tant que métrique
+    annees = list(calcul.keys())
+    annees.sort()
+    calcul[annees[0]]['metrics']['evolution'] = [0] * len(calcul[annees[0]]['languages'])
+    for i in range(1, len(annees)):  # La première année n'a pas d'évolution
+        calcul[annees[i]]['metrics']['evolution'] = [0]*len(calcul[annees[i]]['languages'])
+        for l in range(len(calcul[annees[i]]['languages'])):
+            if (calcul[annees[i]]['languages'][l] in calcul[annees[i - 1]]['languages']):  # le language existait l'année dernière
+                precedent_language_index = calcul[annees[i - 1]]['languages_to_index'][calcul[annees[i]]['languages'][l]]
+                precedent_usage = calcul[annees[i]]['metrics']['number_of_projects'][l] / \
+                                  calcul[annees[i - 1]]['metrics']['number_of_projects'][precedent_language_index]
+                calcul[annees[i]]['metrics']['evolution'][l] = precedent_usage
+            else:
+                calcul[annees[i]]['metrics']['evolution'][l] = 0
+
     return calcul
 
 
 if __name__ == "__main__":
     # Début janvier 2020, il y a un peu plus de 232367000 dépots sur gitlab
     # On va tirer aléatoirement dedans
-    """data = []
-    for i in range(10):
+    data = []
+    for i in range(15):
+        print("Étape" + str(i))
         data = data + random_shaped_data(232367000)
 
-    pickle.dump(data, open('data/pickle', 'wb'))"""
-    data = pickle.load(open('data/pickle1', 'rb'))
+    pickle.dump(data, open('data/pickle', 'wb'))
+    data = pickle.load(open('data/pickle', 'rb'))
     f = open("data/data.json", "w")
     f.write(json.dumps(get_in_shape(data)))
     f.close()
