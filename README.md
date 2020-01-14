@@ -34,7 +34,7 @@ No installation is required, simply go to https://nellybarret.github.io/GithubLa
 
 ## Contributors
 
-[Nelly Barret](nelly.barret@etu.univ-lyon1.fr) (http://www.nellybarret.fr/) – [Jonathan Cabezas](jonathan.cabezas@etu.univ-lyon1.fr) - [Luc Gombert](luc.gombert@etu.univ-lyon1.fr) - [Juliette Reisser](juliette.reisser@etu.univ-lyon1.fr)
+[Nelly Barret](nelly.barret@etu.univ-lyon1.fr) ([website](http://www.nellybarret.fr/)) – [Jonathan Cabezas](jonathan.cabezas@etu.univ-lyon1.fr) - [Luc Gombert](luc.gombert@etu.univ-lyon1.fr) - [Juliette Reisser](juliette.reisser@etu.univ-lyon1.fr)
 
 Students in [M2 Artificial Intelligence](http://master-info.univ-lyon1.fr/IA/) and [M2 Data Science](http://master-info.univ-lyon1.fr/DS/) in Lyon 1 University.
 
