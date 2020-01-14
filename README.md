@@ -8,7 +8,7 @@ This project aims to show the popularity of programming languages that are used 
 
 Our main challenge was to illustrate programming languages evolution through the years. In order to do that, we have retrieve a lot of data (i.e. repositories and their metadata) on GitHub. After that, we have processed all these repos into a JSON file. We have produced a chord diagram with some parameters to visualize it nicely.
 
-![](header.png)
+![Github logo](logo-github.png)
 
 ## Installation
 
