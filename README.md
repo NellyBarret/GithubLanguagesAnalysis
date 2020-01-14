@@ -19,12 +19,12 @@ No installation is required, simply go to https://nellybarret.github.io/GithubLa
 
 ## Release History
 
-* 11/20/2020
+* 11/20/2019
     * submitted the idea of our project to our teacher
-* 11/26/2020
+* 11/26/2019
     * defined the structure of our project, the challenges
     * defined roles for each member of the group
-* 12/18/2020
+* 12/18/2019
     * get a peer-review of our project by another team
 * 01/09/2020
     * presentation of our project
