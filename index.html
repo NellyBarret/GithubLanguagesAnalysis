@@ -18,7 +18,17 @@
 	<!-- D3.js -->
 	<script src="https://d3js.org/d3.v5.min.js"></script>
 	<!-- Theme style  -->
-	<link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+
+    #btnGoTo:hover > a {
+      background-color: white;
+      color: rgb(56, 183, 188) !important;
+    }
+  </style>
 	</head>
 	<body>
 		
@@ -38,25 +48,37 @@
 								<!-- <h1>Make your life simpler, try this for free.</h1> -->
 								<p>Le service GitHub permet d'héberger et de gérer le développement de logiciels. Il a réussi à se faire un nom depuis son lancement en 2008. Aujourd'hui, GitHub compte 37 millions d'utilisateurs, plus de 100 millions de dépôts (dont 28 millions sont publics). Ainsi, se profile la problématique suivante :</p>
 								<h2>Comment caractériser l'évolution des langages utilisés dans les projets déposés sur GitHub ?</h2>
-								<p>Notre méthode propose une visualisation interactive de l'évolution de la popularité des langages utilisés sur GitHub.</p>
+                <p>Notre méthode propose une visualisation interactive de l'évolution de la popularité des langages utilisés sur GitHub ainsi qu'un scénario illsutrant l'utilité de celle-ci.</p>
+                
+                <button id="btnGoTo" class="btn btn-white btn-outline"><a href="#goto" style="color: white;">C'est parti</a></button>
 							</div>
 					</div>
 				</div>
 			</div>
 		</header>
 		<!-- END #header -->
-
-		<div class="services section">
+		
+		<div class="services section"><a id="goto"></a> 
 			<div class="container">
 				<div class="heading text-center">
-					<h2>Récupération de données</h2>
-					<p>Github propose une API REST à l'adresse suivante : <a href="https://api.github.com">https://api.github.com</a>. </p>
-					<p>Nous avons récupéré plus de 100 000 dépôts GitHub avec leurs méta-données, c'est-à-dire la liste des langages utilisés, le nombre d'étoiles, le nombre de forks et beaucoup d'autres. Ces données ont été stockées sous la forme de fichiers JSON. Nous avons ensuite transformé ces données pour calculer les différentes métriques et utiliser des données dans la visualisation.</p>
+          <h2>Les aventures d'Alice</h2>
+          <p><b>Alice part à la recherche de son stage</b></p>
+          <p>Alice est en 3ème année de Licence Informatique à l'Université Lyon 1 et elle cherche un stage dans le développement Web. Elle veut en trouver un qui lui permettra d'apprendre de nouveaux langages et de travailler sur des projets qu'elle pourra ajouter à son portfolio. Elle a passé plusieurs entretiens d'embauche et se demande quelle opportunité est la meilleure. Elle a pris en note les détails de chacun des projets et cherche à savoir lequel sera le plus intéressant pour elle. En utilisant notre visualisation, Alice pourra comparer la popularité des langages qui seront utilisés dans les projets des entreprises qu'elle a contactées. Ainsi Alice pourra choisir l'entreprise qui lui propose un projet avec des langages de programmation très populaires.</p>
+
+          <p><b>Alice a besoin d'aide</b></p>
+          <p> Alice a maintenant réussi à trouver le stage de ses rêves et compte en profiter au maximum pour s'épanouir et apprendre ! Seulement, son maître de stage lui propose deux langages de programmation différents pour le back-end mais Alice ne sait pas vraiment lequel choisir. Grâce à notre visualisation, elle pourra trouver un langage qui sera complémentaire à celui utilisé côté front-end. En effet, elle pourra observer comment les langages sont associés entre eux et ainsi déterminer le meilleur compromis.</p>
+
+          <p><b>Alice a bientôt fini son stage</b></p>
+          <p>Alice est maintenant bienôt à la fin de son stage et elle doit s'attaquer à son rapport de stage. Elle souhaite faire une section avec un état de l'art sur les technologies actuelles utilisées dans le développement Web. Pour avoir une section reflétant les tendances actuelles en termes de popularité des langages, Alice utilise notre visualisation et a ainsi un large choix pour rédiger son état de l'art. De plus, elle a à sa disposition les liens entre les langages ainsi que différentes métriques ce qui lui permet d'ajouter des chiffres concrets dans son rapport.</p>
+
+          <p><b>Quelques années plus tard...</b></p>
+          <p>Alice a réussi avec succès son stage, sa Licence et son Master à l'Université Lyon 1 et est développeuse depuis bientiôt 10 ans dans l'entreprise où elle a effectué son stage. Elle a su acquérir beaucoup de pratique en terme de choix de technologies mais veut tout de même rester à la pointe du progrès. Avec notre visualisation, Alice s'informe sur les poids de chaque langage face aux autres et reste ainsi à la pointe de la technologie.</p>
+					<div id="chordDiagDiv"></div>
 				</div>
 			</div>
-		</div>
-		
-		<div class="services section">
+    </div>
+    
+    <div class="services section">
 			<div class="container">
 				<div class="heading text-center">
 					<h2>&Eacute;volution de la popularité des langages utilisés sur GitHub</h2>
@@ -64,41 +86,20 @@
 					<div id="chordDiagDiv"></div>
 				</div>
 			</div>
+    </div>
+    
+    <div class="services section">
+			<div class="container">
+				<div class="heading text-center">
+					<h2>Récupération et traitement des données</h2>
+					<p>Github propose une API REST à l'adresse suivante : <a href="https://api.github.com">https://api.github.com</a>. </p>
+					<p>Nous avons récupéré plus de 100 000 dépôts GitHub avec leurs méta-données, c'est-à-dire la liste des langages utilisés, le nombre d'étoiles, le nombre de forks et beaucoup d'autres. Ces données ont été stockées sous la forme de fichiers JSON. Nous avons ensuite transformé ces données pour calculer les différentes métriques et utiliser des données dans la visualisation.</p>
+				</div>
+			</div>
 		</div>
 		<!-- END .services -->
 		
-		<footer id="gtco-footer" class="gtco-section" role="contentinfo">
-			<div class="gtco-container">
-				<div class="row row-pb-md">
-					<div class="col-md-4 gtco-widget gtco-footer-paragraph">
-						<h3>Cube</h3>
-						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus placerat enim et urna sagittis, rhoncus euismod.</p>
-					</div>
-					<div class="col-md-4 gtco-footer-link">
-						<div class="row">
-							<div class="col-md-6">
-								<p>
-									Nelly Barret, Jonathan Cabezas, Luc Gombert, Juliette Reisser <br>
-									Université de Lyon
-								</p>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="gtco-copyright">
-				<div class="gtco-container">
-					<div class="row">
-						<div class="col-md-6 text-left">
-							<p><small>&copy; 2016 Free HTML5. All Rights Reserved. </small></p>
-						</div>
-						<div class="col-md-6 text-right">
-							<p><small>Designed by <a href="http://freehtml5.co/" target="_blank">FreeHTML5.co</a> Demo Images: <a href="http://pixeden.com/" target="_blank">Pixeden</a> &amp; <a href="http://unsplash.com" target="_blank">Unsplash</a></small> </p>
-						</div>
-					</div>
-				</div>
-			</div>
-		</footer>
+		
 
 	</div>
 
@@ -122,6 +123,10 @@
 	</body>
 
 	<script>
+    function scrollTo(hash) {
+      location.hash = "#" + hash;
+    }
+
     addChordDiag("https://raw.githubusercontent.com/NellyBarret/GithubLanguagesAnalysis/master/data/data.json");
 
     function addChordDiag(filepath) {
