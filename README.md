@@ -29,6 +29,11 @@ No installation is required, simply go to https://nellybarret.github.io/GithubLa
 * 01/16/2020
     * integration of the teachers' suggestions in our project
 
+## Our inspiration
+
+* [This paper](https://web.cs.ucdavis.edu/~filkov/papers/lang_github.pdf) established a comparison between 17 programming languages in order to order them by a score. This score is based on the number of projects that used the language, the number of authors, the number of commits and some others indicators.
+* And our minds to think about a great project for our data visualization course !
+
 ## Contributors
 
 [Nelly Barret](nelly.barret@etu.univ-lyon1.fr) ([website](http://www.nellybarret.fr/)) – [Jonathan Cabezas](jonathan.cabezas@etu.univ-lyon1.fr) - [Luc Gombert](luc.gombert@etu.univ-lyon1.fr) - [Juliette Reisser](juliette.reisser@etu.univ-lyon1.fr)
