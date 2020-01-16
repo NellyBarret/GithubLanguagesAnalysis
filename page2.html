@@ -81,17 +81,14 @@
             <div class="container">
                 <div class="heading text-center">
                     <h2>Classement des langages utilisés sur GitHub</h2>
-                    <p>Positionnez votre souris sur l'un des langages dans la liste pour comparer son positionnement à l'année sélectionnée. </p>
+                    <p>Positionnez votre souris sur l'un des langages dans la liste pour comparer son positionnement à celui de la seconde année sélectionnée. Sélectionnez deux années avec les sliders prévus à cet effet pour comparer les langages entre eux.</p>
                     <p>Github propose une API REST à l'adresse suivante : <a href="https://api.github.com">https://api.github.com</a>. Nous avons récupéré plus de 100 000 dépôts GitHub avec leurs méta-données, c'est-à-dire la liste
                         des langages utilisés, le nombre d'étoiles, le nombre de forks et beaucoup d'autres. Ces données
                         ont été stockées sous la forme de fichiers JSON. Nous avons ensuite transformé ces données pour
                         calculer les différentes métriques et utiliser des données dans la visualisation.</p>
                     
                     <h3>Légende</h3>
-                    <p>Years : l'année des données utilisées pour la visualisation </br> 
-                        Metric : la métrique utilisée pour l'importance de chaque langage </br> 
-                        Languages : le pourcentage de langages conservés parmis tous ceux de l'année </br> 
-                        Links : le pourcentage de liens conservés parmis tous ceux calculés</p>
+                    <p>Sort by : le point de comparaison entre les projets des deux années choisies</p>
                     <div>
                         <span id="spanYear0"></span>
                         <span>Sort by </span>
@@ -204,7 +201,7 @@
           data = data.slice(0, nbToShow);
    
           var svg = d3.select("body").append("svg")
-          		.attr("id", `bar_chart_${nb}`)
+          	  .attr("id", `bar_chart_${nb}`)
               .attr("width", outerWidth)
               .attr("height", outerHeight)
             .append("g")
@@ -261,8 +258,10 @@
                .attr("y", function(d, i) { return y(i); })
                .attr("dy", -1);
 
+          
           d3.select(`#spanYear${nb}`)
-          	.text(`Year ${nb} : `)
+          	.text(`Year `+parseInt(2013+nb))
+            // .attr("title", `${nb}`)
             .append("input")
             .attr("id", `yearSlider${nb}`)
             .attr("type", "range")
@@ -271,6 +270,8 @@
             .attr("value", year[nb])
             .on(`input.${nb}`, function() {
               year[nb] = this.value;
+              d3.select(`#spanYear${nb}`)
+          	    .text(`Year `+parseInt(2013+nb))
             
             	for (nb of [0,1])
               	drawBarChart(nb);
