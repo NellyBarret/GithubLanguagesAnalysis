@@ -92,6 +92,11 @@
                         Metric : la métrique utilisée pour l'importance de chaque langage </br> 
                         Languages : le pourcentage de langages conservés parmi tous ceux de l'année </br> 
                         Links : le pourcentage de liens conservés parmi tous ceux calculés</p>
+                        Link Method : la méthode utilisée pour relier les languages entre eux : </br>
+                        <ul>
+                            <li>Raw : le nombre de projets en commun définit la longueur du lien. Les langages les plus populaires sont favorisés.</li>
+                            <li>Symetric : le nombre de projets en commun est divisé par le nombre de projets du plus petit langage, donnant un pourcentage de d'utilisation du lien. Les gros languages beaucoup utilisés avec des petits langages sont favorisés.</li>
+                            <li>Language based : c'est la seule méthode asymétrique que l'on propose. Le nombre de projets en commun est divisé par le nombre de projets de chaque langage, de part et d'autre du lien. Avec cette méthode on a sûrement la mesure la moins biaisée pour mesurer à quel point un langage est utilisé avec d'autres.</li>
                     <div id="chordDiagDiv"></div>
                 </div>
             </div>
@@ -291,22 +296,22 @@
 
             // Link method
 
-            // ui.append("span")
-            //     .attr("class", "ui_label")
-            //     .text("Link method: ");
+            ui.append("span")
+                .attr("class", "ui_label")
+                .text("Link method: ");
 
-            // const selectLM = ui.append("select");
+            const selectLM = ui.append("select");
 
-            // selectLM.selectAll("option")
-            //     .data(linkMethods)
-            //     .join("option")
-            //     .attr("value", d => d)
-            //     .text(d => d);
+            selectLM.selectAll("option")
+                .data(linkMethods)
+                .join("option")
+                .attr("value", d => d)
+                .text(d => d);
 
-            // selectLM.on("change", function () {
-            //     linkMethod = this.value;
-            //     draw();
-            // })
+            selectLM.on("change", function () {
+                linkMethod = this.value;
+                draw();
+            })
 
 
             //// Metrics
