@@ -20,6 +20,9 @@
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <!-- Theme style  -->
     <link rel="stylesheet" href="css/style.css">
+    <!-- Font awesome -->
+    <link href="https://use.fontawesome.com/releases/v5.0.4/css/all.css" rel="stylesheet">
+
     <style>
         html {
             scroll-behavior: smooth;
@@ -85,11 +88,10 @@
                         ont été stockées sous la forme de fichiers JSON. Nous avons ensuite transformé ces données pour
                         calculer les différentes métriques et utiliser des données dans la visualisation.</p>
                     
-                    <h3>Légende</h3>
-                    <p>Sort by : le point de comparaison entre les projets des deux années choisies</p>
                     <div>
                       <span>Sort by </span>
                       <select id="selectSorting"></select>
+                      <i class="fas fa-question-circle" title="Point de comparaison entre les projets des deux années choisies"></i>
                       <button id="asc" class="arrow">↑</button>
                       <button id="desc" class="arrow">↓</button>
                       <div class="row">
