@@ -90,15 +90,22 @@
                     <h3>Légende</h3>
                     <p>Sort by : le point de comparaison entre les projets des deux années choisies</p>
                     <div>
-                        <span id="spanYear0"></span>
-                        <span>Sort by </span>
-                        <select id="selectSorting">
-                        </select>
-                        <button id="asc" class="arrow">↑</button>
-                        <button id="desc" class="arrow">↓</button>
-                        <span id="spanYear1"></span>
+                      <span>Sort by </span>
+                      <select id="selectSorting"></select>
+                      <button id="asc" class="arrow">↑</button>
+                      <button id="desc" class="arrow">↓</button>
+                      <div class="row">
+                        <div class="col-md-6">
+                          <span id="spanYear0"></span>
+                          <div id="svg0"></div>
                         </div>
+                        <div class="col-md-6">
+                          <span id="spanYear1"></span>
+                          <div id="svg1"></div>
+                        </div>
+                      </div>
                     </div>
+                  </div>
                 </div>
             </div>
         </div>
@@ -200,7 +207,7 @@
 
           data = data.slice(0, nbToShow);
    
-          var svg = d3.select("body").append("svg")
+          var svg = d3.select(`#svg${nb}`).append("svg")
           	  .attr("id", `bar_chart_${nb}`)
               .attr("width", outerWidth)
               .attr("height", outerHeight)
@@ -260,7 +267,7 @@
 
           
           d3.select(`#spanYear${nb}`)
-          	.text(`Year `+parseInt(2013+nb))
+          	.text(`Year ${year[nb]}`)
             // .attr("title", `${nb}`)
             .append("input")
             .attr("id", `yearSlider${nb}`)
@@ -270,8 +277,6 @@
             .attr("value", year[nb])
             .on(`input.${nb}`, function() {
               year[nb] = this.value;
-              d3.select(`#spanYear${nb}`)
-          	    .text(`Year `+parseInt(2013+nb))
             
             	for (nb of [0,1])
               	drawBarChart(nb);
