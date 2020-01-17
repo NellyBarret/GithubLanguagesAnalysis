@@ -20,6 +20,9 @@
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <!-- Theme style  -->
     <link rel="stylesheet" href="css/style.css">
+    <!-- Font awesome -->
+    <link href="https://use.fontawesome.com/releases/v5.0.4/css/all.css" rel="stylesheet">
+
     <style>
         html {
             scroll-behavior: smooth;
@@ -47,48 +50,68 @@
                     des langages utilisés, le nombre d'étoiles, le nombre de forks et beaucoup d'autres. Ces données
                     ont été stockées sous la forme de fichiers JSON. Nous avons ensuite transformé ces données pour
                     calculer les différentes métriques et utiliser des données dans la visualisation.</p>
-                
-                <h3>Légende</h3>
-                <p>Years : l'année des données utilisées pour la visualisation </br> 
-                    Metric : la métrique utilisée pour l'importance de chaque langage </br> 
-                    Languages : le pourcentage de langages conservés parmi tous ceux de l'année </br> 
-                    Links : le pourcentage de liens conservés parmi tous ceux calculés</br>
-                    Link Method : la méthode utilisée pour relier les langages entre eux : </br>
-                    <ul>
-                        <li>Raw : le nombre de projets en commun définit la largeur du lien. Les langages les plus populaires sont favorisés (liens plus épais).</li>
-                        <li>Symetric : le nombre de projets en commun est divisé par le nombre de projets du plus petit langage, donnant un pourcentage d'utilisation du lien. Les gros langages beaucoup utilisés avec des petits langages sont favorisés.</li>
-                        <li>Language based : c'est la seule méthode asymétrique que l'on propose. Le nombre de projets en commun est divisé par le nombre de projets de chaque langage, de part et d'autre du lien. Avec cette méthode on a sûrement la mesure la moins biaisée pour mesurer à quel point un langage est utilisé avec d'autres.</li>
-                    </ul>
-                </p>
             </div>
         </div>
         <div id="ui" class="row heading text-center" style>
             <div>
                 <div class="col-md-4">
                     <span>YEARS</span>
+                    <i class="fas fa-question-circle" title="L'année des données utilisées pour la visualisation"></i>
                     <div id="ui-years"></div>
                 </div>
                 <div class="col-md-4">
                     <span>LANGUAGES</span>
+                    <i class="fas fa-question-circle" title="Le pourcentage de langages conservés parmi tous ceux de l'année"></i>
                     <div id="ui-languages"></div>
                 </div>
                 <div class="col-md-4">
                     <span>LINKS</span>
+                    <i class="fas fa-question-circle" title="Le pourcentage de liens conservés parmi tous ceux calculés"></i>
                     <div id="ui-links"></div>
                 </div>
             </div>
             <div>
                 <div class="col-md-6">
                     <span>LINK METHOD</span>
+                    <i class="fas fa-question-circle" title="La méthode utilisée pour relier les langages entre eux. Cliquez sur l'icône pour plus de détails." data-toggle="modal" data-target="#myModal"></i>
                     <div id="ui-linkmethod"></div>
                 </div>
                 <div class="col-md-6">
                     <span>METRIC</span>
+                    <i class="fas fa-question-circle" title="La métrique utilisée pour l'importance de chaque langage"></i>
                     <div id="ui-metric"></div>
                 </div>
             </div>
         </div>    
         <div id="chordDiagDiv"></div>
+    </div>
+
+    <!-- Modal -->
+    <div id="myModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+    
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Link Method</h4>
+            </div>
+            <div class="modal-body">
+            <p>
+                Link Method : la méthode utilisée pour relier les langages entre eux : </br>
+                <ul>
+                    <li>Raw : le nombre de projets en commun définit la largeur du lien. Les langages les plus populaires sont favorisés (liens plus épais).</li>
+                    <li>Symetric : le nombre de projets en commun est divisé par le nombre de projets du plus petit langage, donnant un pourcentage d'utilisation du lien. Les gros langages beaucoup utilisés avec des petits langages sont favorisés.</li>
+                    <li>Language based : c'est la seule méthode asymétrique que l'on propose. Le nombre de projets en commun est divisé par le nombre de projets de chaque langage, de part et d'autre du lien. Avec cette méthode on a sûrement la mesure la moins biaisée pour mesurer à quel point un langage est utilisé avec d'autres.</li>
+                </ul>
+            </p>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    
+        </div>
     </div>
 
 
