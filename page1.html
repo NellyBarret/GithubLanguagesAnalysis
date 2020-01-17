@@ -37,60 +37,58 @@
     <div class="loader"></div>
 
     <div id="page">
-        <div class="services section">
-            <div class="container">
-                <div class="heading text-center">
-                    <h2>&Eacute;volution de la popularité des langages utilisés sur GitHub</h2>
-                    <p>Positionnez votre souris sur un langage ou un lien pour plus de détails. Sélectionnez une année
-                        dans le slider pour mettre à jour le diagramme avec les données de l'année sélectionnée.</p>
-                    
-                    <p>Nous avons utilisé l'<a href="https://api.github.com">API REST</a> que propose GitHub. Nous avons récupéré plus de 3800 dépôts GitHub avec leurs métadonnées, c'est-à-dire la liste
-                        des langages utilisés, le nombre d'étoiles, le nombre de forks et beaucoup d'autres. Ces données
-                        ont été stockées sous la forme de fichiers JSON. Nous avons ensuite transformé ces données pour
-                        calculer les différentes métriques et utiliser des données dans la visualisation.</p>
-                    
-                    <h3>Légende</h3>
-                    <p>Years : l'année des données utilisées pour la visualisation </br> 
-                        Metric : la métrique utilisée pour l'importance de chaque langage </br> 
-                        Languages : le pourcentage de langages conservés parmi tous ceux de l'année </br> 
-                        Links : le pourcentage de liens conservés parmi tous ceux calculés</br>
-                        Link Method : la méthode utilisée pour relier les langages entre eux : </br>
-                        <ul>
-                            <li>Raw : le nombre de projets en commun définit la largeur du lien. Les langages les plus populaires sont favorisés (liens plus épais).</li>
-                            <li>Symetric : le nombre de projets en commun est divisé par le nombre de projets du plus petit langage, donnant un pourcentage d'utilisation du lien. Les gros langages beaucoup utilisés avec des petits langages sont favorisés.</li>
-                            <li>Language based : c'est la seule méthode asymétrique que l'on propose. Le nombre de projets en commun est divisé par le nombre de projets de chaque langage, de part et d'autre du lien. Avec cette méthode on a sûrement la mesure la moins biaisée pour mesurer à quel point un langage est utilisé avec d'autres.</li>
-                        </ul>
-                    </p>
-                    <div id="ui" class="row">
-                        <div>
-                            <div class="col-md-4">
-                                <span>YEARS</span>
-                                <div id="ui-years"></div>
-                            </div>
-                            <div class="col-md-4">
-                                <span>LANGUAGES</span>
-                                <div id="ui-languages"></div>
-                            </div>
-                            <div class="col-md-4">
-                                <span>LINKS</span>
-                                <div id="ui-links"></div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="col-md-6">
-                                <span>LINK METHOD</span>
-                                <div id="ui-linkmethod"></div>
-                            </div>
-                            <div class="col-md-6">
-                                <span>METRIC</span>
-                                <div id="ui-metric"></div>
-                            </div>
-                        </div>
-                    </div>    
-                    <div id="chordDiagDiv"></div>
-                </div>
+        <div class="container">
+            <div class="heading text-center">
+                <h2>&Eacute;volution de la popularité des langages utilisés sur GitHub</h2>
+                <p>Positionnez votre souris sur un langage ou un lien pour plus de détails. Sélectionnez une année
+                    dans le slider pour mettre à jour le diagramme avec les données de l'année sélectionnée.</p>
+                
+                <p>Nous avons utilisé l'<a href="https://api.github.com">API REST</a> que propose GitHub. Nous avons récupéré plus de 3800 dépôts GitHub avec leurs métadonnées, c'est-à-dire la liste
+                    des langages utilisés, le nombre d'étoiles, le nombre de forks et beaucoup d'autres. Ces données
+                    ont été stockées sous la forme de fichiers JSON. Nous avons ensuite transformé ces données pour
+                    calculer les différentes métriques et utiliser des données dans la visualisation.</p>
+                
+                <h3>Légende</h3>
+                <p>Years : l'année des données utilisées pour la visualisation </br> 
+                    Metric : la métrique utilisée pour l'importance de chaque langage </br> 
+                    Languages : le pourcentage de langages conservés parmi tous ceux de l'année </br> 
+                    Links : le pourcentage de liens conservés parmi tous ceux calculés</br>
+                    Link Method : la méthode utilisée pour relier les langages entre eux : </br>
+                    <ul>
+                        <li>Raw : le nombre de projets en commun définit la largeur du lien. Les langages les plus populaires sont favorisés (liens plus épais).</li>
+                        <li>Symetric : le nombre de projets en commun est divisé par le nombre de projets du plus petit langage, donnant un pourcentage d'utilisation du lien. Les gros langages beaucoup utilisés avec des petits langages sont favorisés.</li>
+                        <li>Language based : c'est la seule méthode asymétrique que l'on propose. Le nombre de projets en commun est divisé par le nombre de projets de chaque langage, de part et d'autre du lien. Avec cette méthode on a sûrement la mesure la moins biaisée pour mesurer à quel point un langage est utilisé avec d'autres.</li>
+                    </ul>
+                </p>
             </div>
         </div>
+        <div id="ui" class="row heading text-center" style>
+            <div>
+                <div class="col-md-4">
+                    <span>YEARS</span>
+                    <div id="ui-years"></div>
+                </div>
+                <div class="col-md-4">
+                    <span>LANGUAGES</span>
+                    <div id="ui-languages"></div>
+                </div>
+                <div class="col-md-4">
+                    <span>LINKS</span>
+                    <div id="ui-links"></div>
+                </div>
+            </div>
+            <div>
+                <div class="col-md-6">
+                    <span>LINK METHOD</span>
+                    <div id="ui-linkmethod"></div>
+                </div>
+                <div class="col-md-6">
+                    <span>METRIC</span>
+                    <div id="ui-metric"></div>
+                </div>
+            </div>
+        </div>    
+        <div id="chordDiagDiv"></div>
     </div>
 
 
