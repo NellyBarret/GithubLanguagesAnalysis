@@ -497,7 +497,7 @@ form label {
   font-weight: normal !important;
 }
 
-#header {
+#header, #ui {
   background: #3dcdbc;
   background: -moz-linear-gradient(left, #3dcdbc 0%, #33a1bd 100%);
   background: -webkit-gradient(left top, right top, color-stop(0%, #3dcdbc), color-stop(100%, #33a1bd));
@@ -507,7 +507,7 @@ form label {
   background: linear-gradient(to right, #3dcdbc 0%, #33a1bd 100%);
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3dcdbc', endColorstr='#33a1bd', GradientType=1 );
 }
-#header p {
+#header p, #ui p {
   color: #d3f1ed;
   font-size: 20px;
   margin-bottom: 40px !important;

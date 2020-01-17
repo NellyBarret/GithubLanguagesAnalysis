@@ -29,44 +29,6 @@
             background-color: white;
             color: rgb(56, 183, 188) !important;
         }
-
-
-
-        h1 {
-            margin: 0px 0px 15px 20px;
-            font-family: 'Arial';
-            text-align: center;
-        }
-
-        .bar {
-            fill: steelblue;
-        }
-
-        .hovered {
-            fill: blue;
-        }
-
-        .title {
-            text-anchor: middle;
-            font-size: 20px;
-        }
-
-        .axis_label {
-            fill: black;
-            font: 10px sans-serif;
-            pointer-events: none;
-        }
-
-        .x path,
-        .x stroke {
-            display: none;
-        }
-
-        .arrow {
-            font-weight: bold;
-            font-size: 20px;
-            padding: 0;
-        }
     </style>
 </head>
 
@@ -97,7 +59,34 @@
                             <li>Raw : le nombre de projets en commun définit la largeur du lien. Les langages les plus populaires sont favorisés (liens plus épais).</li>
                             <li>Symetric : le nombre de projets en commun est divisé par le nombre de projets du plus petit langage, donnant un pourcentage d'utilisation du lien. Les gros langages beaucoup utilisés avec des petits langages sont favorisés.</li>
                             <li>Language based : c'est la seule méthode asymétrique que l'on propose. Le nombre de projets en commun est divisé par le nombre de projets de chaque langage, de part et d'autre du lien. Avec cette méthode on a sûrement la mesure la moins biaisée pour mesurer à quel point un langage est utilisé avec d'autres.</li>
-                            </p>
+                        </ul>
+                    </p>
+                    <div id="ui" class="row">
+                        <div>
+                            <div class="col-md-4">
+                                <span>YEARS</span>
+                                <div id="ui-years"></div>
+                            </div>
+                            <div class="col-md-4">
+                                <span>LANGUAGES</span>
+                                <div id="ui-languages"></div>
+                            </div>
+                            <div class="col-md-4">
+                                <span>LINKS</span>
+                                <div id="ui-links"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="col-md-6">
+                                <span>LINK METHOD</span>
+                                <div id="ui-linkmethod"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <span>METRIC</span>
+                                <div id="ui-metric"></div>
+                            </div>
+                        </div>
+                    </div>    
                     <div id="chordDiagDiv"></div>
                 </div>
             </div>
@@ -202,15 +191,13 @@
 
             linkMethod = linkMethods[0];
 
-            const ui = d3.select("body")
-                .append("div")
-                .style("background-color", "rgb(56, 183, 188)");
+            let ui = d3.select("#ui-years");
 
             //// Years
 
             // append min limit for years
             ui.append("span")
-                .text(`YEARS : ${minYear}`);
+                .text(`${minYear}`);
 
             // append range slider
             ui.append("span")
@@ -226,8 +213,6 @@
                     year = this.value;
                     d3.select("#yearSlider")
                         .attr("title", year);
-                    // d3.select("#yearSpan")
-                    //     .text(` year ${year}`);
                     draw();
                 });
             
@@ -235,18 +220,9 @@
             ui.append("span")
                 .text(`${maxYear}`);
 
-            //// Filters
-
-            // ui.append("div")
-            //     .attr("class", "ui_label")
-            //     .text("Filters: ");
-
             // Language Filter
-            ui.append("br")
-            ui.append("span")
-                .attr("style", "padding: 0 20px 0 10px")
-                .attr("id", "languageFilterSpan")
-                .text("LANGUAGES");
+            ui = d3.select("#ui-languages");
+
             ui.append("span")
                 .attr("class", "ui_slider")
                 .append("input")
@@ -260,8 +236,6 @@
                     languagePourcentage = languageFilter * maxPourcentage / filterMax;
                     d3.select("#languageFilterSlider")
                         .attr("title", languagePourcentage);
-                    // d3.select("#languageFilterSpan")
-                    //     .text(` top ${languagePourcentage}% of languages`);
                     draw();
                 });
 
@@ -269,11 +243,7 @@
 
 
             // Link Filter
-            ui.append("br")
-            ui.append("span")
-                .attr("style", "padding: 0 0 0 10px")
-                .attr("id", "linkFilterSpan")
-                .text("LINKS");
+            ui = d3.select("#ui-links")
 
             ui.append("span")
                 .attr("class", "ui_slider")
@@ -288,18 +258,13 @@
                     linkPourcentage = linkFilter * maxPourcentage / filterMax;
                     d3.select("#linkFilterSlider")
                         .attr("title", linkPourcentage);
-                    // d3.select("#linkFilterSpan")
-                    //     .text(` top ${linkPourcentage}% of links`);
                     draw();
                 });
 
             
 
             // Link method
-
-            ui.append("span")
-                .attr("class", "ui_label")
-                .text("Link method: ");
+            ui = d3.select("#ui-linkmethod");
 
             const selectLM = ui.append("select");
 
@@ -316,12 +281,7 @@
 
 
             //// Metrics
-
-            ui.append("br");
-            ui.append("span")
-                .attr("class", "ui_label")
-                .text("Metric: ");
-
+            ui = d3.select("#ui-metric");
             const selectMetric = ui.append("select");
 
             selectMetric.selectAll("option")
